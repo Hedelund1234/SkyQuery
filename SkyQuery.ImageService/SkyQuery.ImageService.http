@@ -1,0 +1,6 @@
+@SkyQuery.ImageService_HostAddress = http://localhost:5120
+
+GET {{SkyQuery.ImageService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
