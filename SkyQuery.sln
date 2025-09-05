@@ -34,6 +34,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppGateway", "AppGateway", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyQuery.AppGateway", "SkyQuery.AppGateway\SkyQuery.AppGateway.csproj", "{B60A17B5-A8EC-942A-5E3F-9C2CF5176CDC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F30CACC1-8968-4689-AA6B-D4D7593046E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyQuery.ImageService.Domain.Tests", "SkyQuery.ImageService.Domain.Tests\SkyQuery.ImageService.Domain.Tests.csproj", "{AE82864A-706D-4A08-9C0A-EECAA12855D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +92,10 @@ Global
 		{B60A17B5-A8EC-942A-5E3F-9C2CF5176CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B60A17B5-A8EC-942A-5E3F-9C2CF5176CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B60A17B5-A8EC-942A-5E3F-9C2CF5176CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE82864A-706D-4A08-9C0A-EECAA12855D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE82864A-706D-4A08-9C0A-EECAA12855D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE82864A-706D-4A08-9C0A-EECAA12855D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE82864A-706D-4A08-9C0A-EECAA12855D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +111,8 @@ Global
 		{DDDB985F-FF8C-40CF-A286-1060FEE730B5} = {9D419505-AD9B-460F-B670-4B261B44C77B}
 		{7011364A-AF2D-C162-E42D-983E0A996C85} = {42531CD2-0EE8-40E2-966C-2B91B37E1D3D}
 		{B60A17B5-A8EC-942A-5E3F-9C2CF5176CDC} = {F58634ED-6E94-4830-9CB4-60F2DDD86607}
+		{F30CACC1-8968-4689-AA6B-D4D7593046E9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{AE82864A-706D-4A08-9C0A-EECAA12855D6} = {F30CACC1-8968-4689-AA6B-D4D7593046E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B81A33B-32CD-4E65-81E6-9BA2CCD2784E}

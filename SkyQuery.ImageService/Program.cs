@@ -1,6 +1,19 @@
+using SkyQuery.ImageService.Application.Interfaces;
+using SkyQuery.ImageService.Application.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// All httpclients
+builder.Services.AddHttpClient("dataforsyningclient", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("SkyQuery.ImageService/1.0");
+});
+
+// Dependency Injections
+builder.Services.AddScoped<IDataforsyningService, DataforsyningService>();
 
 // Registers DaprClient in DI
 builder.Services.AddDaprClient();

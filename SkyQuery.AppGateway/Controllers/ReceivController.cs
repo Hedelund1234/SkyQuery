@@ -21,7 +21,7 @@ namespace SkyQuery.AppGateway.Controllers
         [Topic("pubsub", "image.available")]
         public async Task<IActionResult> HandleReceivedImage(object request)
         {
-            _logger.LogInformation($"Received final image: {request}");
+            _logger.LogInformation($"Received final image");
             return Ok();
         }
     }

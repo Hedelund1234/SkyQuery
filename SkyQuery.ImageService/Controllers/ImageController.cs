@@ -1,6 +1,7 @@
 ﻿using Dapr;
 using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
+using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Domain.Entities;
 
 namespace SkyQuery.ImageService.Controllers
@@ -11,11 +12,13 @@ namespace SkyQuery.ImageService.Controllers
     {
         private readonly ILogger<ImageController> _logger;
         private readonly DaprClient _daprClient;
+        private readonly IDataforsyningService _dataforsyningService;
 
-        public ImageController(DaprClient daprClient, ILogger<ImageController> logger)
+        public ImageController(DaprClient daprClient, ILogger<ImageController> logger, IDataforsyningService dataforsyningService)
         {
             _logger = logger;
             _daprClient = daprClient;
+            _dataforsyningService = dataforsyningService;
         }
 
         [Topic("pubsub", "image.requested")]
@@ -24,7 +27,9 @@ namespace SkyQuery.ImageService.Controllers
             _logger.LogInformation($"Received image request for UserId: {request.UserId}, MGRS: {request.Mgrs}");
             try
             {
-                await _daprClient.PublishEventAsync("pubsub", "image.available", "Dette er et satelitbillede");
+                byte[] result = await _dataforsyningService.GetMapFromDFAsync(request.UserId, request.Mgrs);
+
+                await _daprClient.PublishEventAsync("pubsub", "image.available", result);
                 return Ok();
             }
             catch (Exception ex)

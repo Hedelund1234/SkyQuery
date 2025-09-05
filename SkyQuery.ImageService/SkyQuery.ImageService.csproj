@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SkyQuery.ImageService.Application\SkyQuery.ImageService.Application.csproj" />
     <ProjectReference Include="..\SkyQuery.ImageService.Domain\SkyQuery.ImageService.Domain.csproj" />
     <ProjectReference Include="..\SkyQuery.ServiceDefaults\SkyQuery.ServiceDefaults.csproj" />
   </ItemGroup>
