@@ -18,7 +18,7 @@ namespace SkyQuery.AppGateway.Controllers
             _daprClient = daprClient;
         }
 
-        [Topic("pubsub", "image.requested")]
+        [Topic("pubsub", "image.available")]
         public async Task<IActionResult> HandleReceivedImage(object request)
         {
             _logger.LogInformation($"Received final image: {request}");
