@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Domain.Converters;
+using SkyQuery.ImageService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +33,14 @@ namespace SkyQuery.ImageService.Application.Services
             _bbox = "";
         }
 
-        public async Task<byte[]> GetMapFromDFAsync(Guid userId, string mgrs)
+        public async Task<ImageAvailable> GetMapFromDFAsync(ImageRequest request)
         {
+            ImageAvailable resultImage = new ImageAvailable();
+            resultImage.UserId = request.UserId;
+            resultImage.Mgrs = request.Mgrs;
             try
             {
-                var (lon, lat) = MgrsHelper.MgrsToLonLat(mgrs);
+                var (lon, lat) = MgrsHelper.MgrsToLonLat(request.Mgrs);
                 var (x, y) = MgrsHelper.LonLatToWebMercator(lon, lat);
                 var (minx, miny, maxx, maxy) = MgrsHelper.CalculateBoxForPicture(_areaSize, x, y);
 
@@ -44,7 +48,7 @@ namespace SkyQuery.ImageService.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Box Calculation went wrong UserId: {userId} Mgrs: {mgrs} Exception: {ex}", userId, mgrs, ex);
+                _logger.LogError("Box Calculation went wrong UserId: {userId} Mgrs: {mgrs} Exception: {ex}", request.UserId, request.Mgrs, ex);
             }
 
 
@@ -54,16 +58,18 @@ namespace SkyQuery.ImageService.Application.Services
 
             try
             {
-                var result = await _httpClient.GetByteArrayAsync(url);
+                byte[] result = await _httpClient.GetByteArrayAsync(url);
+                resultImage.Image = result;
                 //TODO: Save in database (Model needs to be made first)
-                _logger.LogInformation("External Api successfully called for UserId: {userId} Mgrs: {mgrs}", userId, mgrs);
+                _logger.LogInformation("External Api successfully called for UserId: {userId} Mgrs: {mgrs}", request.UserId, request.Mgrs);
 
-                return result;
+                return resultImage;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Could not call external API for UserId: {userId} Mgrs: {mgrs} Exception: {ex}", userId, mgrs, ex);
-                return new byte[0];
+                _logger.LogError("Could not call external API for UserId: {userId} Mgrs: {mgrs} Exception: {ex}", request.UserId, request.Mgrs, ex);
+                throw new Exception();
+                //return resultImage;
             }
         }
     }

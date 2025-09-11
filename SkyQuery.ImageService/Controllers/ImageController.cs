@@ -27,7 +27,7 @@ namespace SkyQuery.ImageService.Controllers
             _logger.LogInformation($"Received image request for UserId: {request.UserId}, MGRS: {request.Mgrs}");
             try
             {
-                byte[] result = await _dataforsyningService.GetMapFromDFAsync(request.UserId, request.Mgrs);
+                ImageAvailable result = await _dataforsyningService.GetMapFromDFAsync(request);
 
                 await _daprClient.PublishEventAsync("pubsub", "image.available", result);
                 return Ok();

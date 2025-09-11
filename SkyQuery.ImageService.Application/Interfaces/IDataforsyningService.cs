@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkyQuery.ImageService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace SkyQuery.ImageService.Application.Interfaces
 {
     public interface IDataforsyningService
     {
-        Task<byte[]> GetMapFromDFAsync(Guid userId, string mgrs);
+        Task<ImageAvailable> GetMapFromDFAsync(ImageRequest request);
     }
 }
