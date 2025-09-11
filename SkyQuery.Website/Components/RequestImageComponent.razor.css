@@ -1,0 +1,49 @@
+﻿/* Titel styling */
+.component-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* Card omkring inputs */
+.request-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Inputs */
+.custom-input {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease-in-out;
+    padding: 0.6rem 0.8rem;
+}
+
+    .custom-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 6px rgba(0,123,255,0.3);
+        outline: none;
+    }
+
+/* Knappen */
+.custom-btn {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    width: 100%;
+}
+
+    .custom-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }

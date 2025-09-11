@@ -1,0 +1,39 @@
+﻿<h3>RequestImageComponent</h3>
+
+<div class="mb-3">
+    <label class="form-label" for="userIdInput">UserId</label>
+    <input id="userIdInput"
+           class="form-control"
+           @bind="UserId"
+           placeholder="Indtast UserId" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label" for="mgrsInput">MGRS</label>
+    <input id="mgrsInput"
+           class="form-control"
+           @bind="Mgrs"
+           placeholder="Indtast MGRS (fx 32V MN 1234 5678)" />
+</div>
+
+<button class="btn btn-primary" @onclick="OnRequestImage">
+    Send forespørgsel
+</button>
+
+@if (!string.IsNullOrWhiteSpace(LastAction))
+{
+    <div class="alert alert-info mt-3">@LastAction</div>
+}
+
+@code {
+    private string UserId { get; set; } = string.Empty;
+    private string Mgrs { get; set; } = string.Empty;
+
+    private string? LastAction;
+
+    private void OnRequestImage()
+    {
+        // TODO: Erstat med din egen logik (fx kald til en API, navigation, osv.)
+        LastAction = $"Knap trykket. UserId='{UserId}', MGRS='{Mgrs}'.";
+    }
+}

@@ -94,9 +94,51 @@ namespace SkyQuery.AppGateway.Infrastructure.TempStorage
             File.Move(metaTmp, metaPath, overwrite: true);
         }
 
-        public async Task<ImageAvailable> GetAsync(Guid userId, string Mgrs)
+        public async Task<ImageAvailable> GetAsync(Guid userId, string mgrs)
         {
-            throw new NotImplementedException();
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid userId", nameof(userId));
+            }
+
+            if (string.IsNullOrWhiteSpace(mgrs))
+            {
+                throw new ArgumentException("Mgrs is required", nameof(mgrs));
+            }
+
+            var safeMgrs = mgrs.Replace(" ", "");
+
+            var dir = Path.Combine(_root, userId.ToString());
+
+            if (!Directory.Exists(dir))
+            {
+                throw new FileNotFoundException($"No image for {userId} found");
+            }
+
+            // Find seneste fil der matcher MGRS
+            var pattern = $"{safeMgrs}_*.png";
+
+            var latestPath = Directory.EnumerateFiles(dir, pattern, SearchOption.TopDirectoryOnly)
+                                        .OrderByDescending(p => File.GetCreationTimeUtc(p))   // eller LastWriteTimeUtc
+                                        .FirstOrDefault();
+
+            if (latestPath is null)
+            {
+                throw new FileNotFoundException($"No image starting with {safeMgrs} found for user {userId}");
+            }
+                
+
+            var bytes = await File.ReadAllBytesAsync(latestPath);
+
+            var image = new ImageAvailable
+            {
+                UserId = userId,
+                Mgrs = mgrs,
+                ContentType = "png",
+                Image = bytes
+            };
+
+            return image;
         }
     }
 }
