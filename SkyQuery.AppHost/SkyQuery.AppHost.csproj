@@ -20,6 +20,7 @@
     <ProjectReference Include="..\SkyQuery.AppGateway\SkyQuery.AppGateway.csproj" />
     <ProjectReference Include="..\SkyQuery.AuthService\SkyQuery.AuthService.csproj" />
     <ProjectReference Include="..\SkyQuery.ImageService\SkyQuery.ImageService.csproj" />
+    <ProjectReference Include="..\SkyQuery.Website\SkyQuery.Website.csproj" />
   </ItemGroup>
 
 </Project>

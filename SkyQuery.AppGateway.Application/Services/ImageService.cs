@@ -1,8 +1,9 @@
 ﻿using Dapr.Client;
-using SkyQuery.AppGateway.Entities;
-using SkyQuery.AppGateway.Interfaces;
+using Microsoft.Extensions.Logging;
+using SkyQuery.AppGateway.Application.Interfaces;
+using SkyQuery.AppGateway.Domain.Entities;
 
-namespace SkyQuery.AppGateway.Services
+namespace SkyQuery.AppGateway.Application.Services
 {
     public class ImageService : IImageService
     {

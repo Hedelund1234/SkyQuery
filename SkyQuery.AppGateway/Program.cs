@@ -1,5 +1,6 @@
-using SkyQuery.AppGateway.Interfaces;
-using SkyQuery.AppGateway.Services;
+using SkyQuery.AppGateway.Application.Interfaces;
+using SkyQuery.AppGateway.Application.Services;
+using SkyQuery.AppGateway.Infrastructure.TempStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddDaprClient();
 
 //DI
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddSingleton<IImageStore, FileSystemImageStore>();
+
+
 
 // Add services to the container.
 

@@ -24,5 +24,7 @@ builder.AddProject<Projects.SkyQuery_AppGateway>("skyquery-appgateway")
 
 builder.AddProject<Projects.SkyQuery_AuthService>("skyquery-authservice");
 
+builder.AddProject<Projects.SkyQuery_Website>("skyquery-website");
+
 
 builder.Build().Run();
