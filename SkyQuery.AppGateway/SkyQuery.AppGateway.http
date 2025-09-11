@@ -6,7 +6,7 @@ Accept: application/json
 ###
 
 ### Request to Image Entry endpoint
-POST {{SkyQuery.AppGateway_HostAddress}}/entry/image
+POST {{SkyQuery.AppGateway_HostAddress}}/images/image
 Content-Type: application/json
 Accept: application/json
 {
@@ -15,7 +15,7 @@ Accept: application/json
 }
 
 ### Request to Image Entry endpoint
-POST {{SkyQuery.AppGateway_HostAddress}}/entry/image
+POST {{SkyQuery.AppGateway_HostAddress}}/images/image
 Content-Type: application/json
 Accept: application/json
 {
@@ -24,7 +24,7 @@ Accept: application/json
 }
 
 ### Request to Image Entry endpoint
-POST {{SkyQuery.AppGateway_HostAddress}}/entry/image
+POST {{SkyQuery.AppGateway_HostAddress}}/images/image
 Content-Type: application/json
 Accept: application/json
 {

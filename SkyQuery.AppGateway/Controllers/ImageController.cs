@@ -5,7 +5,7 @@ using SkyQuery.AppGateway.Domain.Entities;
 
 namespace SkyQuery.AppGateway.Controllers
 {
-    [Route("entry")]
+    [Route("images")]
     [ApiController]
     public class ImageController : ControllerBase
     {
@@ -33,7 +33,8 @@ namespace SkyQuery.AppGateway.Controllers
             }
         }
 
-        [Topic("pubsub", "image.available")]
+        [HttpPost("available")]
+        //[Topic("pubsub", "image.available")]
         public async Task<IActionResult> HandleReceivedImage(ImageAvailable imageAvailble)
         {
             _logger.LogInformation($"Received final image");

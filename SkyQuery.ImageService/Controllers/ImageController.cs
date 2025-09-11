@@ -7,7 +7,7 @@ using SkyQuery.ImageService.Domain.Entities;
 namespace SkyQuery.ImageService.Controllers
 {
     [ApiController]
-    [Route("image")]
+    [Route("imageservice")]
     public class ImageController : ControllerBase
     {
         private readonly ILogger<ImageController> _logger;
@@ -29,12 +29,20 @@ namespace SkyQuery.ImageService.Controllers
             {
                 ImageAvailable result = await _dataforsyningService.GetMapFromDFAsync(request);
 
-                await _daprClient.PublishEventAsync("pubsub", "image.available", result);
+                // Sends with service invocation
+                 await _daprClient.InvokeMethodAsync<ImageAvailable>(
+                    HttpMethod.Post,
+                    "skyquery-appgateway-dapr",
+                    "images/available",
+                    result);
+
+                //await _daprClient.PublishEventAsync("pubsub", "image.available", result);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error publishing image available event");
+                //_logger.LogError(ex, "Error publishing image available event");
+                _logger.LogError(ex, "Error using service invocation image available event");
                 return StatusCode(500, "Internal server error");
             }
         }
