@@ -10,11 +10,16 @@
     <PackageReference Include="Dapr.AspNetCore" Version="1.15.4" />
     <PackageReference Include="Dapr.Client" Version="1.15.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SkyQuery.ImageService.Application\SkyQuery.ImageService.Application.csproj" />
     <ProjectReference Include="..\SkyQuery.ImageService.Domain\SkyQuery.ImageService.Domain.csproj" />
+    <ProjectReference Include="..\SkyQuery.ImageService.Infrastructure\SkyQuery.ImageService.Infrastructure.csproj" />
     <ProjectReference Include="..\SkyQuery.ServiceDefaults\SkyQuery.ServiceDefaults.csproj" />
   </ItemGroup>
 

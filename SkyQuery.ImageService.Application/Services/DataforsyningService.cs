@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SkyQuery.ImageService.Application.Interfaces;
+using SkyQuery.ImageService.Application.Interfaces.Persistence;
 using SkyQuery.ImageService.Domain.Converters;
 using SkyQuery.ImageService.Domain.Entities;
 using System;
@@ -15,6 +16,7 @@ namespace SkyQuery.ImageService.Application.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<DataforsyningService> _logger;
+        private readonly IDataforsyningImageRepository _imageRepository;
 
         //private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar";
         //private readonly string _layer = "jylland_2011_10cm";
@@ -34,11 +36,12 @@ namespace SkyQuery.ImageService.Application.Services
 
         private string _bbox = "";
 
-        public DataforsyningService(IHttpClientFactory httpClientFactory, ILogger<DataforsyningService> logger)
+        public DataforsyningService(IHttpClientFactory httpClientFactory, ILogger<DataforsyningService> logger, IDataforsyningImageRepository imageRepository)
         {
             _httpClient = httpClientFactory.CreateClient("dataforsyningclient");
             _logger = logger;
             _bbox = "";
+            _imageRepository = imageRepository;
         }
 
         public async Task<ImageAvailable> GetMapFromDFAsync(ImageRequest request)
@@ -59,6 +62,25 @@ namespace SkyQuery.ImageService.Application.Services
                 _logger.LogError("Box Calculation went wrong UserId: {userId} Mgrs: {mgrs} Exception: {ex}", request.UserId, request.Mgrs, ex);
             }
 
+            var mgrsForInput = request.Mgrs.Replace(" ", "");
+
+            //This checks if image is in database
+            try
+            {
+                var image = await _imageRepository.GetImageByMgrs(mgrsForInput);
+                if (image != null && image.Bytes.Length > 0)
+                {
+                    _logger.LogInformation("Image already existed in Database");
+                    resultImage.Image = image.Bytes;
+                    return resultImage;
+                }
+            }
+            catch
+            {
+                _logger.LogError("While getting database content something went wrong");
+                throw new Exception();
+            }
+
 
             var url = $"{_baseUrl}?service=WMS&request=GetMap&version=1.3.0" +
                         $"&layers={_layer}&styles=&crs=EPSG:3857&bbox={_bbox}" +
@@ -70,6 +92,14 @@ namespace SkyQuery.ImageService.Application.Services
                 resultImage.Image = result;
                 //TODO: Save in database (Model needs to be made first)
                 _logger.LogInformation("External Api successfully called for UserId: {userId} Mgrs: {mgrs}", request.UserId, request.Mgrs);
+
+                // This saves to db
+                var image = new Image
+                {
+                    Mgrs = mgrsForInput,
+                    Bytes = result
+                };
+                await _imageRepository.AddImageAsync(image);
 
                 return resultImage;
             }
