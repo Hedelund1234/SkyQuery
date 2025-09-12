@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using SkyQuery.ImageService.Application.Interfaces;
+using SkyQuery.ImageService.Application.Interfaces.Persistence;
 using SkyQuery.ImageService.Application.Services;
+using SkyQuery.ImageService.Infrastructure.Data;
+using SkyQuery.ImageService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +16,17 @@ builder.Services.AddHttpClient("dataforsyningclient", client =>
     client.DefaultRequestHeaders.UserAgent.ParseAdd("SkyQuery.ImageService/1.0");
 });
 
+
+// Connection string
+var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Registrér SELVE TYPEN du injicerer i repo’et
+builder.Services.AddDbContext<ImageServiceDbContext>(options =>
+    options.UseSqlServer(conn));
+
 // Dependency Injections
 builder.Services.AddScoped<IDataforsyningService, DataforsyningService>();
+builder.Services.AddScoped<IDataforsyningImageRepository, DataforsyningImageRepository>();
 
 // Registers DaprClient in DI
 builder.Services.AddDaprClient();
