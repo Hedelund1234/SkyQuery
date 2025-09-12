@@ -16,11 +16,19 @@ namespace SkyQuery.ImageService.Application.Services
         private readonly HttpClient _httpClient;
         private readonly ILogger<DataforsyningService> _logger;
 
-        private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar";
-        private readonly string _layer = "jylland_2011_10cm";
+        //private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar";
+        //private readonly string _layer = "jylland_2011_10cm";
+        //private readonly string _token = "a072fc76ce87ca3c3997e2c6a1a8b396";
+        //private readonly int _width = 800;
+        //private readonly int _height = 800;
+
+        //private readonly int _areaSize = 5000;
+
+        private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar_DAF";
+        private readonly string _layer = "geodanmark_2024_12_5cm";
         private readonly string _token = "a072fc76ce87ca3c3997e2c6a1a8b396";
-        private readonly int _width = 800;
-        private readonly int _height = 800;
+        private readonly int _width = 1024;
+        private readonly int _height = 1024;
 
         private readonly int _areaSize = 5000;
 
