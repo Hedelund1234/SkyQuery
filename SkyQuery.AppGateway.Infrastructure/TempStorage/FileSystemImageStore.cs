@@ -68,7 +68,7 @@ namespace SkyQuery.AppGateway.Infrastructure.TempStorage
 
             if (File.Exists(filePath))
             {
-                throw new InvalidOperationException("Image with that timestamp already in tempdb");
+                throw new InvalidOperationException("Image with that timestamp already in tempdb"); // Needs to be changed!
             }
 
             // Atomisk skriv: skriv til .tmp og rename
