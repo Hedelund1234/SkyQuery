@@ -1,4 +1,5 @@
 ﻿using Dapr;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Domain.Entities;
@@ -20,6 +21,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("image")]
+        //[Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public IActionResult PostImageRequest([FromBody] ImageRequest request)
         {
             try
