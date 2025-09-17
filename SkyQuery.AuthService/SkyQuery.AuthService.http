@@ -1,6 +1,22 @@
 @SkyQuery.AuthService_HostAddress = http://localhost:5184
 
-GET {{SkyQuery.AuthService_HostAddress}}/weatherforecast/
+
+### Login with user Frederik
+POST {{SkyQuery.AuthService_HostAddress}}/auth/login
+Content-Type: application/json
 Accept: application/json
+{
+  "email": "frederik@gmail.com",
+  "password": "!Passw0rd"
+}
+
+### Login with user Operator
+POST {{SkyQuery.AuthService_HostAddress}}/auth/login
+Content-Type: application/json
+Accept: application/json
+{
+  "email": "operator@gmail.com",
+  "password": "!Passw0rd"
+}
 
 ###
