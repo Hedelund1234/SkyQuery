@@ -34,7 +34,11 @@
     <div class="alert alert-info mt-3">@LastAction</div>
 }
 
-<img src="@imageDataUrl" alt="Billede" />
+@if (!string.IsNullOrWhiteSpace(imageDataUrl))
+{
+    <img src="@imageDataUrl" alt="Billede" class="preview-image" />
+}
+
 
 @code {
     // f4a0c594-4467-4c36-9e18-bf77c1dc5fb5
@@ -50,6 +54,11 @@
     {
         try
         {
+            if (UserId == "" || Mgrs == "")
+            {
+                LastAction = "❌ UserId eller Mgrs er tom";
+                return;
+            }
             await ImageService.OrderImage(UserId, Mgrs);
             LastAction = "✅ Bestilling sendt!";
         }
@@ -62,6 +71,11 @@
 
     private async Task OnHent()
     {
+        if (UserId == "" || Mgrs == "")
+        {
+            LastAction = "❌ UserId eller Mgrs er tom";
+            return;
+        }
         var bytes = await ImageService.GetImageAsync(UserId, Mgrs);
         imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
         StateHasChanged();
