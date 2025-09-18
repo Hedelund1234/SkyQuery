@@ -1,4 +1,7 @@
-﻿<h3>RequestImageComponent</h3>
+﻿@using SkyQuery.Website.Interfaces
+@inject IImageService ImageService
+
+<h3>Request Image</h3>
 
 <div class="mb-3">
     <label class="form-label" for="userIdInput">UserId</label>
@@ -16,24 +19,51 @@
            placeholder="Indtast MGRS (fx 32V MN 1234 5678)" />
 </div>
 
-<button class="btn btn-primary" @onclick="OnRequestImage">
-    Send forespørgsel
-</button>
+<div class="d-flex gap-2">
+    <button class="btn btn-success" @onclick="OnBestil">
+        Bestil
+    </button>
+
+    <button class="btn btn-primary" @onclick="OnHent">
+        Hent
+    </button>
+</div>
 
 @if (!string.IsNullOrWhiteSpace(LastAction))
 {
     <div class="alert alert-info mt-3">@LastAction</div>
 }
 
+<img src="@imageDataUrl" alt="Billede" />
+
 @code {
+    // f4a0c594-4467-4c36-9e18-bf77c1dc5fb5
+    // 32UNG 3158 5027
     private string UserId { get; set; } = string.Empty;
     private string Mgrs { get; set; } = string.Empty;
 
+    private string? imageDataUrl;
+
     private string? LastAction;
 
-    private void OnRequestImage()
+    private async Task OnBestil()
     {
-        // TODO: Erstat med din egen logik (fx kald til en API, navigation, osv.)
-        LastAction = $"Knap trykket. UserId='{UserId}', MGRS='{Mgrs}'.";
+        try
+        {
+            await ImageService.OrderImage(UserId, Mgrs);
+            LastAction = "✅ Bestilling sendt!";
+        }
+        catch (Exception ex)
+        {
+            LastAction = $"❌ Fejl: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnHent()
+    {
+        var bytes = await ImageService.GetImageAsync(UserId, Mgrs);
+        imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
+        StateHasChanged();
     }
 }

@@ -1,9 +1,5 @@
 @SkyQuery.AppGateway_HostAddress = http://localhost:5152
 
-GET {{SkyQuery.AppGateway_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
 
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
@@ -13,6 +9,7 @@ Accept: application/json
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2079",
   "mgrs": "32UNG 3032 2526"
 }
+###
 
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
@@ -22,6 +19,7 @@ Accept: application/json
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2079",
   "mgrs": "32UNG 4872 6110"
 }
+###
 
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
@@ -31,6 +29,7 @@ Accept: application/json
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2022",
   "mgrs": "32UNG 4872 6110"
 }
+###
 
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
@@ -40,6 +39,7 @@ Accept: application/json
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2001",
   "mgrs": "32UNG 3118 5055"
 }
+###
 
 
 ### Request to Image Entry endpoint
@@ -51,6 +51,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2079",
   "mgrs": "32UNG 3032 2526"
 }
+###
 
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
@@ -61,3 +62,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
   "userId": "AA6DE4ED-1F05-4999-80E6-D465B02E2079",
   "mgrs": "32UNG 3281 7353"
 }
+###
+
+### Checks ready status for user with given UserId
+GET {{SkyQuery.AppGateway_HostAddress}}/images/ready?userId=AA6DE4ED-1F05-4999-80E6-D465B02E2079
+
