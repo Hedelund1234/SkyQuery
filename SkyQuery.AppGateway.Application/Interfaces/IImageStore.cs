@@ -11,5 +11,6 @@ namespace SkyQuery.AppGateway.Application.Interfaces
     {
         Task PutAsync(ImageAvailable imageAvailable);
         Task<ImageAvailable> GetAsync(Guid userId, string Mgrs);
+        List<string> CheckReadiness(Guid userId);
     }
 }

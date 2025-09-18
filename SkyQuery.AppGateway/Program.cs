@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Application.Services;
@@ -9,24 +9,44 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-// Registers DaprClient in DI
+// Dapr
 builder.Services.AddDaprClient();
 
-//DI
+// DI
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddSingleton<IImageStore, FileSystemImageStore>();
 
+// Controllers
+builder.Services.AddControllers().AddDapr();
 
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-builder.Services.AddControllers().AddDapr(); // vigtigt
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// OpenAPI
 builder.Services.AddOpenApi();
 
+// ===== CORS =====
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+        else
+        {
+            policy
+                .WithOrigins("https://www.skyquery.hedef.dk")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+    });
+});
 
 
+// Auth
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["Key"];
 
@@ -64,12 +84,17 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// Kun redirect n�r ikke kaldt af Dapr-sidecar
+// Kun redirect når ikke kaldt af Dapr-sidecar
 var daprPresent = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DAPR_HTTP_PORT"));
 if (!daprPresent)
 {
     app.UseHttpsRedirection();
 }
+
+
+// ===== Aktiver CORS =====
+app.UseCors();
+
 
 app.UseAuthentication();
 app.UseAuthorization();

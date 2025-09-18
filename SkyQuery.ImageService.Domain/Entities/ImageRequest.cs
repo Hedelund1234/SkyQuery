@@ -9,6 +9,6 @@ namespace SkyQuery.ImageService.Domain.Entities
     public class ImageRequest
     {
         public Guid UserId { get; set; }
-        public string Mgrs { get; set; }
+        public string Mgrs { get; set; } = string.Empty;
     }
 }

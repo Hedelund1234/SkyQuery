@@ -140,5 +140,27 @@ namespace SkyQuery.AppGateway.Infrastructure.TempStorage
 
             return image;
         }
+
+        public List<string> CheckReadiness(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid userId", nameof(userId));
+            }
+
+            var dir = Path.Combine(_root, userId.ToString());
+
+            if (!Directory.Exists(dir))
+            {
+                return new List<string>();
+                //throw new FileNotFoundException($"No image for {userId} found");
+            }
+
+            var files = Directory.GetFiles(dir)
+                                .Select(f => Path.GetFileName(f) ?? string.Empty)
+                                .ToList();
+
+            return files;
+        }
     }
 }
