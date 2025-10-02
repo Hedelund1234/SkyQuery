@@ -11,7 +11,7 @@ builder.AddProject<Projects.SkyQuery_ImageService>("skyquery-imageservice")
             AppId = "skyquery-imageservice-dapr",
             DaprHttpPort = 3600
         })
-    .WithReference(statestore).WithReference(pubsubComponent);
+        .WithReference(statestore).WithReference(pubsubComponent);
 
 builder.AddProject<Projects.SkyQuery_AppGateway>("skyquery-appgateway")
         .WithDaprSidecar(new DaprSidecarOptions
@@ -19,10 +19,16 @@ builder.AddProject<Projects.SkyQuery_AppGateway>("skyquery-appgateway")
             AppId = "skyquery-appgateway-dapr",
             DaprHttpPort = 3601
         })
-    .WithReference(statestore).WithReference(pubsubComponent);
+        .WithReference(statestore).WithReference(pubsubComponent);
 
 
-builder.AddProject<Projects.SkyQuery_AuthService>("skyquery-authservice");
+builder.AddProject<Projects.SkyQuery_AuthService>("skyquery-authservice")
+        .WithDaprSidecar(new DaprSidecarOptions
+        {
+            AppId = "skyquery-authservice-dapr",
+            DaprHttpPort = 3602
+        })
+        .WithReference(statestore).WithReference(pubsubComponent);
 
 builder.AddProject<Projects.SkyQuery_Website>("skyquery-website");
 
