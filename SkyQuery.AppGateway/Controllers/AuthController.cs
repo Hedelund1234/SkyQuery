@@ -102,5 +102,25 @@ namespace SkyQuery.AppGateway.Controllers
                 return BadRequest(ex);
             }
         }
+
+        //TODO: 
+        //[HttpPost("assign-role")]
+        //[Authorize(Roles = "admin")]
+
+        //TODO: 
+        //[HttpPatch("remove-role")]
+        //[Authorize(Roles = "admin")]
+
+        //TODO: 
+        //[HttpPut("update-user")]
+        //[Authorize(Roles = "admin")]
+
+        //TODO: 
+        //[HttpDelete("delete-user/{userId}")]
+        //[Authorize(Roles = "admin")]
+
+        //TODO: 
+        //[HttpGet("all-users")]
+        //[Authorize(Roles = "admin")]
     }
 }
