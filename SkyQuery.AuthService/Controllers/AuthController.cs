@@ -29,10 +29,6 @@ namespace SkyQuery.AuthService.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
-            //return Ok(new { Authorization = Request.Headers["Authorization"].ToString() }); // FOR TESTING TO BE DELETED
-
-
-
             var user = new IdentityUser { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)

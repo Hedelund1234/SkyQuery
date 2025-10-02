@@ -64,7 +64,7 @@ namespace SkyQuery.AppGateway.Controllers
 
             var authHeader = Request.Headers["Authorization"].ToString();
 
-            try // DONT WORK ATM WIP
+            try
             {
 
                 // Gets token from call and sends with new call
@@ -82,7 +82,7 @@ namespace SkyQuery.AppGateway.Controllers
 
 
                 // 3) Adds Authorization: Beaerer <token>
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
 
 
                 // 4) Send
