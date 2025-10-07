@@ -31,7 +31,11 @@ namespace SkyQuery.AuthService.Controllers
         {
             var user = new IdentityUser { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
             return Ok("User registered!");
         }
 
