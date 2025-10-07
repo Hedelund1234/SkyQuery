@@ -103,13 +103,95 @@ namespace SkyQuery.AppGateway.Controllers
             }
         }
 
-        //TODO: 
-        //[HttpPost("assign-role")]
-        //[Authorize(Roles = "admin")]
+        [HttpPost("assign-role")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AssignRole([FromBody] RoleAssignmentRequest model)
+        {
+            _logger.LogInformation("AssignRole has been called to assign {model.Role} to user with Email {model.Email}", model.Role, model.Email);
 
-        //TODO: 
-        //[HttpPatch("remove-role")]
-        //[Authorize(Roles = "admin")]
+            try
+            {
+                // Gets token from call and sends with new call
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                // 1) Create request body without body
+                var request = _daprClient.CreateInvokeMethodRequest(
+                    HttpMethod.Post,
+                    "skyquery-authservice-dapr",
+                    "auth/assign-role");
+
+
+                // 2) Add body as json
+                request.Content = JsonContent.Create(model); // Content-Type: application/json
+
+
+                // 3) Adds Authorization: Beaerer <token>
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
+
+
+                // 4) Send
+                var response = await _daprClient.InvokeMethodWithResponseAsync(request);
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(body);
+                }
+                return BadRequest(body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error trying to assign role");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("remove-role")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> RemoveRole([FromBody] RoleAssignmentRequest model)
+        {
+            _logger.LogInformation("RemoveRole has been called to assign {model.Role} to user with Email {model.Email}", model.Role, model.Email);
+
+            try
+            {
+                // Gets token from call and sends with new call
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                // 1) Create request body without body
+                var request = _daprClient.CreateInvokeMethodRequest(
+                    HttpMethod.Post,
+                    "skyquery-authservice-dapr",
+                    "auth/remove-role");
+
+
+                // 2) Add body as json
+                request.Content = JsonContent.Create(model); // Content-Type: application/json
+
+
+                // 3) Adds Authorization: Beaerer <token>
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
+
+
+                // 4) Send
+                var response = await _daprClient.InvokeMethodWithResponseAsync(request);
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(body);
+                }
+                return BadRequest(body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error trying to remove role");
+                return BadRequest(ex);
+            }
+        }
 
         //TODO: 
         //[HttpPut("update-user")]

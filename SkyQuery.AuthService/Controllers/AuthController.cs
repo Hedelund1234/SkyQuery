@@ -99,7 +99,7 @@ namespace SkyQuery.AuthService.Controllers
             return Ok($"Rollen '{model.Role}' blev tildelt brugeren '{model.Email}'.");
         }
 
-        [HttpPatch("remove-role")]
+        [HttpPost("remove-role")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveRole([FromBody] RoleAssignment model)
         {
