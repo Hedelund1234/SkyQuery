@@ -193,16 +193,128 @@ namespace SkyQuery.AppGateway.Controllers
             }
         }
 
-        //TODO: 
-        //[HttpPut("update-user")]
-        //[Authorize(Roles = "admin")]
+        [HttpPut("update-user")] // TODO: Test if working with postman setup
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest model)
+        {
+            _logger.LogInformation("UpdateUser has been called for user: {model.UserId}", model.UserId);
 
-        //TODO: 
-        //[HttpDelete("delete-user/{userId}")]
-        //[Authorize(Roles = "admin")]
+            try
+            {
+                // Gets token from call and sends with new call
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
 
-        //TODO: 
-        //[HttpGet("all-users")]
-        //[Authorize(Roles = "admin")]
+                // 1) Create request body without body
+                var request = _daprClient.CreateInvokeMethodRequest(
+                    HttpMethod.Post,
+                    "skyquery-authservice-dapr",
+                    "auth/update-user");
+
+
+                // 2) Add body as json
+                request.Content = JsonContent.Create(model); // Content-Type: application/json
+
+
+                // 3) Adds Authorization: Beaerer <token>
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
+
+
+                // 4) Send
+                var response = await _daprClient.InvokeMethodWithResponseAsync(request);
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(body);
+                }
+                return BadRequest(body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error trying update user {model.UserId}", model.UserId);
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpDelete("delete-user/{userId}")] // TODO: Test if working with postman setup
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            _logger.LogInformation("DeleteUser has been called for user: {userId}", userId);
+
+            try
+            {
+                // Gets token from call and sends with new call
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                // 1) Create request body without body
+                var request = _daprClient.CreateInvokeMethodRequest(
+                    HttpMethod.Post,
+                    "skyquery-authservice-dapr",
+                    $"auth/delete-user/{userId}");
+
+                // 2) Adds Authorization: Beaerer <token>
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
+
+                // 3) Send
+                var response = await _daprClient.InvokeMethodWithResponseAsync(request);
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(body);
+                }
+                return BadRequest(body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error trying to delete user {userId}", userId);
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("all-users")] // TODO: Test if working with postman setup
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            _logger.LogInformation("GetAllUsers has been called");
+
+            try
+            {
+                // Gets token from call and sends with new call
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                // 1) Create request body without body
+                var request = _daprClient.CreateInvokeMethodRequest(
+                    HttpMethod.Post,
+                    "skyquery-authservice-dapr",
+                    "auth/all-users");
+
+                // 2) Adds Authorization: Beaerer <token>
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); // app.UseHttpsRedirection(); on recieving end (AuthService) has to be disabled in development environment
+
+
+                // 3) Send
+                var response = await _daprClient.InvokeMethodWithResponseAsync(request);
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(body);
+                }
+                return BadRequest(body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error trying to GetAllUsers");
+                return BadRequest(ex);
+            }
+        }
     }
 }
