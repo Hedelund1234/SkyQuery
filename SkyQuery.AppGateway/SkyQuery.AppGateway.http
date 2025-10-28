@@ -1,6 +1,16 @@
 @SkyQuery.AppGateway_HostAddress = http://localhost:5152
 
 
+### Login request with Frederik@gmail.com
+POST {{SkyQuery.AppGateway_HostAddress}}/auth/login
+Content-Type: application/json
+Accept: application/json
+{
+  "Email": "frederik@gmail.com",
+  "Password": "!Passw0rd"
+}
+###
+
 ### Request to Image Entry endpoint
 POST {{SkyQuery.AppGateway_HostAddress}}/images/image
 Content-Type: application/json

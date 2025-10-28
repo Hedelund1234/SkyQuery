@@ -31,7 +31,11 @@ namespace SkyQuery.AuthService.Controllers
         {
             var user = new IdentityUser { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
             return Ok("User registered!");
         }
 
@@ -95,7 +99,7 @@ namespace SkyQuery.AuthService.Controllers
             return Ok($"Rollen '{model.Role}' blev tildelt brugeren '{model.Email}'.");
         }
 
-        [HttpPatch("remove-role")]
+        [HttpPost("remove-role")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveRole([FromBody] RoleAssignment model)
         {

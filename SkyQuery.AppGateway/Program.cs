@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Application.Services;
 using SkyQuery.AppGateway.Infrastructure.TempStorage;
@@ -73,6 +74,40 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 
+// BELOW IS USED FOR SWAGGER !!!!!!
+// Swagger + JWT Support
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Description = "Indtast 'Bearer {your JWT token}'"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer(); // USED FOR SWAGGER!!!!
+builder.Services.AddSwaggerGen(); // USED FOR SWAGGER!!!!
 
 var app = builder.Build();
 
@@ -82,6 +117,8 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger(); // USED FOR SWAGGER!!!!
+    app.UseSwaggerUI(); // USED FOR SWAGGER!!!!
 }
 
 // Kun redirect når ikke kaldt af Dapr-sidecar

@@ -99,7 +99,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment()) // https://github.com/dapr/dotnet-sdk/issues/1352 - Header blev fjernet i dev med denne på
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();   // <-- VIGTIG!
 app.UseAuthorization();
