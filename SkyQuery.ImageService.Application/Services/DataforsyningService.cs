@@ -6,6 +6,7 @@ using SkyQuery.ImageService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,9 +89,18 @@ namespace SkyQuery.ImageService.Application.Services
 
             try
             {
-                byte[] result = await _httpClient.GetByteArrayAsync(url);
+                var response = await _httpClient.GetAsync(url);
+                if (response.StatusCode is HttpStatusCode.BadRequest // 400
+                                        or HttpStatusCode.Forbidden // 403
+                                        or HttpStatusCode.NotFound) // 404
+                {
+                    _logger.LogInformation("Permanent DF-fejl {Status} for {Mgrs}. Sender til DLQ.", (int)response.StatusCode, request.Mgrs);
+                   
+                    throw new InvalidDataException($"Permanent DF-fejl {(int)response.StatusCode}.");
+                }
+
+                var result = await response.Content.ReadAsByteArrayAsync();
                 resultImage.Image = result;
-                //TODO: Save in database (Model needs to be made first)
                 _logger.LogInformation("External Api successfully called for UserId: {userId} Mgrs: {mgrs}", request.UserId, request.Mgrs);
 
                 // This saves to db
@@ -106,8 +116,7 @@ namespace SkyQuery.ImageService.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError("Could not call external API for UserId: {userId} Mgrs: {mgrs} Exception: {ex}", request.UserId, request.Mgrs, ex);
-                throw new Exception();
-                //return resultImage;
+                throw;
             }
         }
     }

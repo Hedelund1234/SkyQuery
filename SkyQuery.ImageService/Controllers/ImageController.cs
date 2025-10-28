@@ -30,13 +30,19 @@ namespace SkyQuery.ImageService.Controllers
                 ImageAvailable result = await _dataforsyningService.GetMapFromDFAsync(request);
 
                 // Sends with service invocation
-                 await _daprClient.InvokeMethodAsync<ImageAvailable>(
-                    HttpMethod.Post,
-                    "skyquery-appgateway-dapr",
-                    "images/available",
-                    result);
+                await _daprClient.InvokeMethodAsync<ImageAvailable>(
+                   HttpMethod.Post,
+                   "skyquery-appgateway-dapr",
+                   "images/available",
+                   result);
 
                 //await _daprClient.PublishEventAsync("pubsub", "image.available", result);
+                return Ok();
+            }
+            catch (InvalidDataException ex)
+            {
+                await _daprClient.PublishEventAsync("pubsub", "image.requested.dlq", request);
+                _logger.LogError(ex, "Error in request (moved to DLQ)");
                 return Ok();
             }
             catch (Exception ex)
