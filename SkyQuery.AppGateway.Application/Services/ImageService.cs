@@ -19,7 +19,7 @@ namespace SkyQuery.AppGateway.Application.Services
         {
             try
             {
-                _logger.LogInformation("Requesting new image for {mgrs}", request.Mgrs);
+                _logger.LogInformation("Requesting new image for {mgrs} - Requester: {request.UserId}", request.Mgrs, request.UserId);
                 await _daprClient.PublishEventAsync("pubsub", "image.requested", request);
             }
             catch (Exception ex)

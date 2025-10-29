@@ -37,13 +37,13 @@ namespace SkyQuery.AppGateway.Controllers
         //[Topic("pubsub", "image.available")]
         public async Task<IActionResult> HandleReceivedImage(ImageAvailable imageAvailble)
         {
-            _logger.LogInformation($"Received final image");
+            _logger.LogInformation("Received final image {imageAvailable.Mgrs} requested from {imageAvailable.UserId}", imageAvailble.Mgrs ,imageAvailble.UserId);
             await _imageStore.PutAsync(imageAvailble);
             return Ok();
         }
 
-        [HttpGet("ready")]
-        public List<string> CheckForImages([FromQuery] Guid userId)
+        [HttpGet("ready/{userId}")]
+        public List<string> CheckForImages(Guid userId)
         {
             List<string> result;
             try
