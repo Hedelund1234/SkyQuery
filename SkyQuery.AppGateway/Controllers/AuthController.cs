@@ -207,7 +207,7 @@ namespace SkyQuery.AppGateway.Controllers
 
                 // 1) Create request body without body
                 var request = _daprClient.CreateInvokeMethodRequest(
-                    HttpMethod.Post,
+                    HttpMethod.Put,
                     "skyquery-authservice-dapr",
                     "auth/update-user");
 
@@ -252,7 +252,7 @@ namespace SkyQuery.AppGateway.Controllers
 
                 // 1) Create request body without body
                 var request = _daprClient.CreateInvokeMethodRequest(
-                    HttpMethod.Post,
+                    HttpMethod.Delete,
                     "skyquery-authservice-dapr",
                     $"auth/delete-user/{userId}");
 
@@ -291,7 +291,7 @@ namespace SkyQuery.AppGateway.Controllers
 
                 // 1) Create request body without body
                 var request = _daprClient.CreateInvokeMethodRequest(
-                    HttpMethod.Post,
+                    HttpMethod.Get,
                     "skyquery-authservice-dapr",
                     "auth/all-users");
 
