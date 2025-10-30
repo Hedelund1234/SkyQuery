@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SkyQuery.AppGateway.Controllers
 {
@@ -19,7 +20,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("image")]
-        //[Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public IActionResult PostImageRequest([FromBody] ImageRequest request)
         {
             try
@@ -33,7 +34,7 @@ namespace SkyQuery.AppGateway.Controllers
             }
         }
 
-        [HttpPost("available")]
+        [HttpPost("available")] // Used for receiving images from ImageService
         //[Topic("pubsub", "image.available")]
         public async Task<IActionResult> HandleReceivedImage(ImageAvailable imageAvailble)
         {
@@ -43,6 +44,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpGet("ready/{userId}")]
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public List<string> CheckForImages(Guid userId)
         {
             List<string> result;
@@ -61,6 +63,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("get")]
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public async Task<IActionResult> GetImage([FromBody] ImageRequest request)
         {
             if (request.UserId == Guid.Empty)

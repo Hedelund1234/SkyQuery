@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkyQuery.AppGateway.Domain.Entities.Auth;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace SkyQuery.AppGateway.Controllers
