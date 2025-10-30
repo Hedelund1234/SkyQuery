@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+//Den bliver “importeret” via global using i .NET 8’s Aspire-pakker,
+//så din lokale using-linje bliver markeret som ubrugt, selvom metoden reelt kommer fra
+using Microsoft.Extensions.Http.Resilience; // Used for HttpClient resilience policies
 using Polly;
 using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Application.Interfaces.Persistence;
 using SkyQuery.ImageService.Application.Services;
+using SkyQuery.ImageService.Domain.Entities.Validation;
 using SkyQuery.ImageService.Infrastructure.Data;
 using SkyQuery.ImageService.Infrastructure.Persistence;
-
-//Den bliver “importeret” via global using i .NET 8’s Aspire-pakker,
-//så din lokale using-linje bliver markeret som ubrugt, selvom metoden reelt kommer fra
-using Microsoft.Extensions.Http.Resilience; // Used for HttpClient resilience policies
+using SkyQuery.ImageService.Infrastructure.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +38,13 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ImageServiceDbContext>(options =>
     options.UseSqlServer(conn));
 
+
+builder.Services.Configure<ActorTokenOptions>(builder.Configuration.GetSection("Jwt"));
+
 // Dependency Injections
 builder.Services.AddScoped<IDataforsyningService, DataforsyningService>();
 builder.Services.AddScoped<IDataforsyningImageRepository, DataforsyningImageRepository>();
+builder.Services.AddSingleton<IActorTokenValidator, ActorTokenValidator>(); // Stateless og trådsikker -> Singleton
 
 // Registers DaprClient in DI
 builder.Services.AddDaprClient();

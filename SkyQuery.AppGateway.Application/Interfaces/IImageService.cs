@@ -9,6 +9,6 @@ namespace SkyQuery.AppGateway.Application.Interfaces
 {
     public interface IImageService
     {
-        Task GetNewImage(ImageRequest request);
+        Task GetNewImage(ImageRequestWithToken requestWithToken);
     }
 }

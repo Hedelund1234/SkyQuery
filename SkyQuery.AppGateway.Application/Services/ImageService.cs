@@ -15,16 +15,16 @@ namespace SkyQuery.AppGateway.Application.Services
             _logger = logger;
         }
 
-        public async Task GetNewImage(ImageRequest request)
+        public async Task GetNewImage(ImageRequestWithToken requestWithToken)
         {
             try
             {
-                _logger.LogInformation("Requesting new image for {mgrs} - Requester: {request.UserId}", request.Mgrs, request.UserId);
-                await _daprClient.PublishEventAsync("pubsub", "image.requested", request);
+                _logger.LogInformation("Requesting new image for {mgrs} - Requester: {request.UserId}", requestWithToken.Mgrs, requestWithToken.UserId);
+                await _daprClient.PublishEventAsync("pubsub", "image.requested", requestWithToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error requesting new image for {mgrs}", request);
+                _logger.LogError(ex, "Error requesting new image for {mgrs}", requestWithToken);
             }
         }
     }

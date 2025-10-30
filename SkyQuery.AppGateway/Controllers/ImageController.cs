@@ -25,7 +25,13 @@ namespace SkyQuery.AppGateway.Controllers
         {
             try
             {
-                _imageService.GetNewImage(request);
+                // Gets token from the request header
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                var requestWithToken = new ImageRequestWithToken { UserId = request.UserId, Mgrs = request.Mgrs, JWT = token};
+
+                _imageService.GetNewImage(requestWithToken);
                 return Ok("Image request received.");
             }
             catch (Exception ex)
@@ -35,7 +41,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("available")] // Used for receiving images from ImageService
-        //[Topic("pubsub", "image.available")]
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public async Task<IActionResult> HandleReceivedImage(ImageAvailable imageAvailble)
         {
             _logger.LogInformation("Received final image {imageAvailable.Mgrs} requested from {imageAvailable.UserId}", imageAvailble.Mgrs ,imageAvailble.UserId);
@@ -85,7 +91,7 @@ namespace SkyQuery.AppGateway.Controllers
                     "png" => "image/png",
                     _ => "application/octet-stream"
                 };
-                _logger.LogInformation("Picture was received by {request.userId}", request.UserId);
+                _logger.LogInformation("Picture {request.Mgrs} was received by {request.userId}", request.Mgrs ,request.UserId);
                 return File(result.Image, contentType);
             }
 
