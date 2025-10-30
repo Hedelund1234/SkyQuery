@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SkyQuery.AppGateway.Controllers
 {
@@ -19,12 +20,18 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("image")]
-        //[Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public IActionResult PostImageRequest([FromBody] ImageRequest request)
         {
             try
             {
-                _imageService.GetNewImage(request);
+                // Gets token from the request header
+                var authHeader = Request.Headers["Authorization"].ToString();
+                var token = authHeader.Substring("Bearer ".Length).Trim();
+
+                var requestWithToken = new ImageRequestWithToken { UserId = request.UserId, Mgrs = request.Mgrs, JWT = token};
+
+                _imageService.GetNewImage(requestWithToken);
                 return Ok("Image request received.");
             }
             catch (Exception ex)
@@ -33,8 +40,8 @@ namespace SkyQuery.AppGateway.Controllers
             }
         }
 
-        [HttpPost("available")]
-        //[Topic("pubsub", "image.available")]
+        [HttpPost("available")] // Used for receiving images from ImageService
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public async Task<IActionResult> HandleReceivedImage(ImageAvailable imageAvailble)
         {
             _logger.LogInformation("Received final image {imageAvailable.Mgrs} requested from {imageAvailable.UserId}", imageAvailble.Mgrs ,imageAvailble.UserId);
@@ -43,6 +50,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpGet("ready/{userId}")]
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public List<string> CheckForImages(Guid userId)
         {
             List<string> result;
@@ -61,6 +69,7 @@ namespace SkyQuery.AppGateway.Controllers
         }
 
         [HttpPost("get")]
+        [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public async Task<IActionResult> GetImage([FromBody] ImageRequest request)
         {
             if (request.UserId == Guid.Empty)
@@ -82,7 +91,7 @@ namespace SkyQuery.AppGateway.Controllers
                     "png" => "image/png",
                     _ => "application/octet-stream"
                 };
-                _logger.LogInformation("Picture was received by {request.userId}", request.UserId);
+                _logger.LogInformation("Picture {request.Mgrs} was received by {request.userId}", request.Mgrs ,request.UserId);
                 return File(result.Image, contentType);
             }
 
