@@ -1,0 +1,85 @@
+﻿@using SkyQuery.Website.Interfaces
+@inject IAuthService AuthService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+
+<div class="modal-overlay">
+    <div class="modal-content">
+        <h3>Login</h3>
+        <EditForm Model="@loginRequestModel" OnValidSubmit="HandleLogin">
+            <div>
+                <label for="email">Email:</label>
+                <input id="email" class="input-field" @bind="loginRequestModel.Email" />
+            </div>
+            <div class="password">
+                <label for="password">Adgangskode:</label>
+                <input id="password" class="input-field" @bind="loginRequestModel.Password" Type="password" />
+            </div>
+
+            <div>
+                <button class="loginbutton" type="submit">Login</button>
+            </div>
+        </EditForm>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-message">
+                @errorMessage
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private class LoginRequestModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    [Inject] public NavigationManager Navigation { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public bool Show { get; set; }
+    private LoginRequestModel loginRequestModel = new LoginRequestModel();
+    private string errorMessage = "";
+
+
+    private async Task HandleLogin()
+    {
+        errorMessage = ""; // Nulstil tidligere fejl
+
+        try
+        {
+            var response = await AuthService.Login(loginRequestModel.Email, loginRequestModel.Password);
+
+            // Tjek om vi faktisk fik et gyldigt token
+            if (!string.IsNullOrWhiteSpace(response))
+            {
+                await localStorageService.SetItemAsStringAsync("authToken", response);
+
+                var expiresUtc = DateTimeOffset.Now.AddMinutes(30);
+                await localStorageService.SetItemAsStringAsync("tokenTime", expiresUtc.DateTime.ToString("o"));
+
+                CloseModal(); // Luk modal
+                Navigation.NavigateTo("/"); // Naviger
+            }
+            else
+            {
+                errorMessage = "Login mislykkedes. Tjek dine oplysninger.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Forkert brugernavn eller adgangskode. Prøv igen.";
+            Console.WriteLine($"Login-fejl: {ex.Message}");
+        }
+
+        StateHasChanged(); // Tving re-render af fejlbesked
+    }
+
+    private void CloseModal()
+    {
+        if (OnClose.HasDelegate)
+        {
+            OnClose.InvokeAsync();
+        }
+    }
+}

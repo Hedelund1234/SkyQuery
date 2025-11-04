@@ -1,15 +1,10 @@
 ﻿@using SkyQuery.Website.Interfaces
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 @inject IImageService ImageService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
 
 <h3>Request Image</h3>
-
-<div class="mb-3">
-    <label class="form-label" for="userIdInput">UserId</label>
-    <input id="userIdInput"
-           class="form-control"
-           @bind="UserId"
-           placeholder="Indtast UserId" />
-</div>
 
 <div class="mb-3">
     <label class="form-label" for="mgrsInput">MGRS</label>
@@ -54,7 +49,8 @@
     {
         try
         {
-            if (UserId == "" || Mgrs == "")
+            UserId = await GetUserID();
+            if (UserId == "" || Mgrs == "" || UserId is null)
             {
                 LastAction = "❌ UserId eller Mgrs er tom";
                 return;
@@ -71,13 +67,61 @@
 
     private async Task OnHent()
     {
-        if (UserId == "" || Mgrs == "")
+        try
         {
-            LastAction = "❌ UserId eller Mgrs er tom";
-            return;
+            UserId = await GetUserID();
+            if (UserId == "" || Mgrs == "" || UserId is null)
+            {
+                LastAction = "❌ UserId eller Mgrs er tom";
+                return;
+            }
+            var bytes = await ImageService.GetImageAsync(UserId, Mgrs);
+            imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
         }
-        var bytes = await ImageService.GetImageAsync(UserId, Mgrs);
-        imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
+        catch (Exception ex)
+        {
+            LastAction = $"❌ Billede ikke fundet. Har du bestilt det? MESSAGE: {ex.Message}"; 
+        }
+
         StateHasChanged();
+    }
+
+    private async Task<string> GetUserID()
+    {
+        // 1. Hent token fra local storage
+        var raw = await localStorageService.GetItemAsStringAsync("authToken");
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            throw new Exception("Auth token not found");
+        }
+
+        string? token;
+        try
+        {
+            token = await localStorageService.GetItemAsStringAsync("authToken");
+        }
+        catch
+        {
+            throw new Exception("authToken is not valid JSON or missing 'token' property");
+        }
+
+        // 2. Parse JWT
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+
+        var userId = jwt.Claims
+            .FirstOrDefault(c =>
+                c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier" ||
+                c.Type == ClaimTypes.NameIdentifier)
+            ?.Value;
+
+        if (userId is null)
+        {
+            throw new Exception("UserId claim not found in token");
+        }
+        else
+        {
+            return userId;
+        }
     }
 }

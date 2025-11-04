@@ -1,13 +1,82 @@
 ﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
 
 <div class="main-layout">
-    <div class="nav-bar"><NavMenu /></div>
-    
-
-    <div class="main-content">
-        @Body
-    </div>
-
+    @if (isLoginVisible)
+    {
+        <SkyQuery.Website.Components.LoginComponent OnClose="CloseModal" Show="isLoginVisible" />
+    }
+    else
+    {
+        <div class="nav-bar"><NavMenu /></div>
+        <div class="main-content">
+            @Body
+        </div>
+    }
     @* <div class="footer"><Footer /></div> *@
-    
 </div>
+
+@code {
+    public bool isLoginVisible = true;
+    private Timer? tokenCheckTimer;
+
+    private void CloseModal()
+    {
+        isLoginVisible = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckTokenAsync(); // Start-tjek
+
+        tokenCheckTimer = new Timer(async _ =>
+        {
+            await InvokeAsync(CheckTokenAsync);
+        }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+    }
+
+    private async Task CheckTokenAsync()
+    {
+        string? tokenTime = await localStorageService.GetItemAsStringAsync("tokenTime");
+
+        if (tokenTime != null &&
+            DateTime.TryParse(tokenTime.Trim('"'), null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime date))
+        {
+            if (date <= DateTime.Now && !isLoginVisible)
+            {
+                isLoginVisible = true;
+                StateHasChanged();
+            }
+            else if (date > DateTime.Now && isLoginVisible)
+            {
+                isLoginVisible = false;
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            if (!isLoginVisible)
+            {
+                isLoginVisible = true;
+                StateHasChanged();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        tokenCheckTimer?.Dispose();
+    }
+
+    private async Task LogoutAsync()
+    {
+        await localStorageService.RemoveItemAsync("authToken");
+        await localStorageService.RemoveItemAsync("tokenTime");
+
+        // Ryd brugerdata hvis du har noget gemt i fx en UserService
+
+        isLoginVisible = true;
+        StateHasChanged(); // Tving re-render
+    }
+}
