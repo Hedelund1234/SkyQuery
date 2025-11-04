@@ -34,6 +34,7 @@
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
+
     [Inject] public NavigationManager Navigation { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public bool Show { get; set; }
@@ -47,12 +48,12 @@
 
         try
         {
-            var jwt = await AuthService.Login(loginRequestModel.Email, loginRequestModel.Password);
+            var response = await AuthService.Login(loginRequestModel.Email, loginRequestModel.Password);
 
             // Tjek om vi faktisk fik et gyldigt token
-            if (!string.IsNullOrWhiteSpace(jwt))
+            if (!string.IsNullOrWhiteSpace(response))
             {
-                await localStorageService.SetItemAsStringAsync("authToken", jwt);
+                await localStorageService.SetItemAsStringAsync("authToken", response);
 
                 var expiresUtc = DateTimeOffset.Now.AddMinutes(30);
                 await localStorageService.SetItemAsStringAsync("tokenTime", expiresUtc.DateTime.ToString("o"));

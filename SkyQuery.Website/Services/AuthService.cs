@@ -1,4 +1,5 @@
-﻿using SkyQuery.Website.Interfaces;
+﻿using SkyQuery.Website.Entities;
+using SkyQuery.Website.Interfaces;
 using System.Net.Http.Json;
 
 namespace SkyQuery.Website.Services
@@ -30,7 +31,12 @@ namespace SkyQuery.Website.Services
                     var error = await response.Content.ReadAsStringAsync();
                     throw new HttpRequestException($"Bestilling fejlede: {response.StatusCode} - {error}");
                 }
-                return await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (result == null)
+                {
+                    throw new Exception("Login response is null");
+                }
+                return result.Token;
             }
             catch (Exception ex)
             {

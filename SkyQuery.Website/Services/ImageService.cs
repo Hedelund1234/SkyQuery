@@ -1,4 +1,6 @@
-﻿using SkyQuery.Website.Interfaces;
+﻿using Blazored.LocalStorage;
+using SkyQuery.Website.Interfaces;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace SkyQuery.Website.Services
@@ -6,9 +8,11 @@ namespace SkyQuery.Website.Services
     public class ImageService : IImageService
     {
         private readonly HttpClient _httpClient;
-        public ImageService(HttpClient httpClient)
+        private readonly ILocalStorageService _localStorage;
+        public ImageService(HttpClient httpClient, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
+            _localStorage = localStorage;
         }
         
         public async Task OrderImage(string userId, string mgrs)
@@ -22,6 +26,14 @@ namespace SkyQuery.Website.Services
             {
                 throw new ArgumentException("MGRS is required", nameof(mgrs));
             }
+
+            var token = await _localStorage.GetItemAsStringAsync("authToken");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            
 
             var request = new
             {
@@ -42,12 +54,17 @@ namespace SkyQuery.Website.Services
             {
                 throw new Exception(ex.Message);
             }
-
-
         }
 
         public async Task<byte[]> GetImageAsync(string userId, string mrgs)
         {
+            var token = await _localStorage.GetItemAsStringAsync("authToken");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             var request = new
             {
                 UserId = userId,
