@@ -1,0 +1,164 @@
+﻿/* ===== Modal overlay ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, black 40%, transparent);
+    backdrop-filter: blur(6px);
+    animation: fade-in .18s ease-out;
+}
+
+/* ===== Modal card ===== */
+.modal-content {
+    width: min(520px, calc(100% - 32px));
+    background: var(--elev);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: clamp(16px, 3vw, 26px);
+    animation: pop-in .18s ease-out;
+}
+
+    .modal-content h3 {
+        margin: 0 0 .9rem 0;
+        font-weight: 800;
+        letter-spacing: .2px;
+    }
+
+    /* Lodret spacing mellem felter */
+    .modal-content .password,
+    .modal-content > .mb-3,
+    .modal-content > div {
+        margin-top: .75rem;
+    }
+
+/* ===== Inputs (matcher .form-control) ===== */
+.input-field {
+    width: 100%;
+    background: var(--elev-2);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .06s ease;
+    outline: none;
+}
+
+    .input-field::placeholder {
+        color: #7f8aa5;
+    }
+
+    .input-field:hover {
+        background: #21293b;
+    }
+
+    .input-field:focus {
+        border-color: var(--focus);
+        box-shadow: var(--ring);
+        transform: translateY(-1px);
+    }
+
+/* Labels (matcher .form-label) */
+.modal-content label {
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: .35rem;
+    display: inline-block;
+}
+
+/* ===== Login-knap (matcher .btn .btn-primary) ===== */
+.loginbutton {
+    display: inline-block;
+    margin-top: .9rem;
+    position: relative;
+    border-radius: var(--radius);
+    border: 1px solid #3a66cc; /* som .btn-primary */
+    background: var(--primary);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: .2px;
+    padding: 10px 14px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    transition: transform .06s ease, box-shadow .18s ease, filter .15s ease, background .15s ease, border-color .15s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+    .loginbutton::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 40%);
+        pointer-events: none;
+    }
+
+    .loginbutton:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .loginbutton:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    }
+
+    .loginbutton:focus-visible {
+        box-shadow: 0 0 0 3px rgba(155,193,255,.45), 0 10px 24px rgba(91,140,255,.25);
+    }
+
+/* ===== Error besked (matcher .alert stil) ===== */
+.error-message {
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-left-color: #ff5c7a;
+    background: #2a1420; /* diskret rødlig tint */
+    color: var(--ink);
+    padding: 12px 14px;
+    border-radius: var(--radius);
+}
+
+/* ===== Animationer & reduced motion ===== */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pop-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay,
+    .modal-content,
+    .input-field,
+    .loginbutton {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ===== Små forbedringer på små skærme ===== */
+@media (max-width: 420px) {
+    .modal-content {
+        padding: 14px;
+    }
+}
