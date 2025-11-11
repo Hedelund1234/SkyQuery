@@ -16,11 +16,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? builder.HostEnvironment.BaseAddress;
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) }); // base url is https://localhost:7024/ - See appsettings.json
-
-//builder.Services.AddHttpClient("AppGateway", client =>
-//{
-//    client.BaseAddress = new Uri("https://localhost:7024/");
-//});
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
 
 await builder.Build().RunAsync();
