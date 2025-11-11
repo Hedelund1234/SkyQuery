@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7
@@ -8,7 +6,7 @@ services:
   appgateway:
     image: ghcr.io/hedelund1234/skyquery-appgateway:latest
     env_file:
-      - ../SkyQuery.AppGateway/.env
+      - ../AppGateway/SkyQuery.AppGateway/.env
     environment:
       - ASPNETCORE_URLS=http://+:8080
     volumes:
@@ -36,7 +34,7 @@ services:
   authservice:
     image: ghcr.io/hedelund1234/skyquery-authservice:latest
     env_file:
-      - ../SkyQuery.AuthService/.env
+      - ../AuthService/SkyQuery.AuthService/.env
     environment:
       - ASPNETCORE_URLS=http://+:8081
     restart: unless-stopped
@@ -57,7 +55,7 @@ services:
   imageservice:
     image: ghcr.io/hedelund1234/skyquery-imageservice:latest
     env_file:
-      - ../SkyQuery.ImageService/.env
+      - ../ImageService/SkyQuery.ImageService/.env
     environment:
       - ASPNETCORE_URLS=http://+:8082
     restart: unless-stopped
