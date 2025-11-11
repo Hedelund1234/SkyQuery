@@ -4,18 +4,22 @@ services:
     restart: unless-stopped
 
   appgateway:
-    image: ghcr.io/hedelund1234/skyquery-appgateway:latest
+    build:
+      context: .
+      dockerfile: SkyQuery.AppGateway/Dockerfile
+    image: appgateway-image
+    #container_name: appgateway-container
     env_file:
       - ./SkyQuery.AppGateway/.env
     environment:
-      - ASPNETCORE_URLS=http://+:8080
-    volumes:
-      - skyquery-images:/data/images
+      - ASPNETCORE_URLS=http://+:8080 # App lytter på 8080 inde i containeren
+    ports:
+      - "8010:8080" # ekstern adgang: http://HOST:8010          
     depends_on:
       - authservice
       - imageservice
-    ports:
-      - "127.0.0.1:8080:8080"
+    volumes:
+      - skyquery-images:/data/images
     restart: unless-stopped
 
   appgateway-dapr:
@@ -32,7 +36,11 @@ services:
     restart: unless-stopped
 
   authservice:
-    image: ghcr.io/hedelund1234/skyquery-authservice:latest
+    build:
+      context: .
+      dockerfile: SkyQuery.AuthService/Dockerfile
+    image: authservice-image
+    #container_name: authservice-container
     env_file:
       - ./SkyQuery.AuthService/.env
     environment:
@@ -53,7 +61,11 @@ services:
     restart: unless-stopped
 
   imageservice:
-    image: ghcr.io/hedelund1234/skyquery-imageservice:latest
+    build:
+      context: .
+      dockerfile: SkyQuery.ImageService/Dockerfile
+    image: imageservice-image
+    #container_name: imageservice-container
     env_file:
       - ./SkyQuery.ImageService/.env
     environment:
@@ -71,17 +83,6 @@ services:
     network_mode: "service:imageservice"
     depends_on:
       - imageservice
-    restart: unless-stopped
-
-  website:
-    image: ghcr.io/hedelund1234/skyquery-website:latest
-    environment:
-      - ASPNETCORE_URLS=http://+:8083
-      - APPGATEWAY_BASEURL=http://appgateway:8080
-    depends_on:
-      - appgateway
-    ports:
-      - "127.0.0.1:8083:8083"
     restart: unless-stopped
 
 volumes:
