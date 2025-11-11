@@ -1,0 +1,596 @@
+/* /Components/LoginComponent.razor.rz.scp.css */
+/* ===== Modal overlay ===== */
+.modal-overlay[b-enuasdisb4] {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, black 40%, transparent);
+    backdrop-filter: blur(6px);
+    animation: fade-in-b-enuasdisb4 .18s ease-out;
+}
+
+/* ===== Modal card ===== */
+.modal-content[b-enuasdisb4] {
+    width: min(520px, calc(100% - 32px));
+    background: var(--elev);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: clamp(16px, 3vw, 26px);
+    animation: pop-in-b-enuasdisb4 .18s ease-out;
+}
+
+    .modal-content h3[b-enuasdisb4] {
+        margin: 0 0 .9rem 0;
+        font-weight: 800;
+        letter-spacing: .2px;
+    }
+
+    /* Lodret spacing mellem felter */
+    .modal-content .password[b-enuasdisb4],
+    .modal-content > .mb-3[b-enuasdisb4],
+    .modal-content > div[b-enuasdisb4] {
+        margin-top: .75rem;
+    }
+
+/* ===== Inputs (matcher .form-control) ===== */
+.input-field[b-enuasdisb4] {
+    width: 100%;
+    background: var(--elev-2);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .06s ease;
+    outline: none;
+}
+
+    .input-field[b-enuasdisb4]::placeholder {
+        color: #7f8aa5;
+    }
+
+    .input-field:hover[b-enuasdisb4] {
+        background: #21293b;
+    }
+
+    .input-field:focus[b-enuasdisb4] {
+        border-color: var(--focus);
+        box-shadow: var(--ring);
+        transform: translateY(-1px);
+    }
+
+/* Labels (matcher .form-label) */
+.modal-content label[b-enuasdisb4] {
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: .35rem;
+    display: inline-block;
+}
+
+/* ===== Login-knap (matcher .btn .btn-primary) ===== */
+.loginbutton[b-enuasdisb4] {
+    display: inline-block;
+    margin-top: .9rem;
+    position: relative;
+    border-radius: var(--radius);
+    border: 1px solid #3a66cc; /* som .btn-primary */
+    background: var(--primary);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: .2px;
+    padding: 10px 14px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    transition: transform .06s ease, box-shadow .18s ease, filter .15s ease, background .15s ease, border-color .15s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+    .loginbutton[b-enuasdisb4]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 40%);
+        pointer-events: none;
+    }
+
+    .loginbutton:hover[b-enuasdisb4] {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .loginbutton:active[b-enuasdisb4] {
+        transform: translateY(0);
+        box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    }
+
+    .loginbutton:focus-visible[b-enuasdisb4] {
+        box-shadow: 0 0 0 3px rgba(155,193,255,.45), 0 10px 24px rgba(91,140,255,.25);
+    }
+
+/* ===== Error besked (matcher .alert stil) ===== */
+.error-message[b-enuasdisb4] {
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-left-color: #ff5c7a;
+    background: #2a1420; /* diskret rødlig tint */
+    color: var(--ink);
+    padding: 12px 14px;
+    border-radius: var(--radius);
+}
+
+/* ===== Animationer & reduced motion ===== */
+@keyframes fade-in-b-enuasdisb4 {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pop-in-b-enuasdisb4 {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay[b-enuasdisb4],
+    .modal-content[b-enuasdisb4],
+    .input-field[b-enuasdisb4],
+    .loginbutton[b-enuasdisb4] {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ===== Små forbedringer på små skærme ===== */
+@media (max-width: 420px) {
+    .modal-content[b-enuasdisb4] {
+        padding: 14px;
+    }
+}
+/* /Components/RequestImageComponent.razor.rz.scp.css */
+/* ======= Scoped theme (kun for denne komponent) ======= */
+:host[b-eurq976lcb] {
+    --bg: #0f1115;
+    --elev: #151922;
+    --elev-2: #1b2130;
+    --ink: #e7ebf3;
+    --muted: #a6b0c3;
+    --border: #263044;
+    --primary: #5b8cff;
+    --success: #27d980;
+    --focus: #9bc1ff;
+    --radius-lg: 16px;
+    --radius: 12px;
+    --radius-sm: 10px;
+    --shadow: 0 14px 40px rgba(0,0,0,.4);
+    --ring: 0 0 0 4px color-mix(in srgb, var(--focus) 22%, transparent);
+}
+
+/* ======= Sektion / kort-ramme ======= */
+:host[b-eurq976lcb] {
+    display: block;
+    background: radial-gradient(900px 500px at 0% -10%, rgba(91,140,255,.08), transparent 55%), var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: clamp(16px, 3vw, 28px);
+}
+
+/* ======= Heading ======= */
+h3[b-eurq976lcb] {
+    margin: 0 0 1rem 0;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+/* ======= Form layout (grid på større skærme) ======= */
+.form-grid[b-eurq976lcb] {
+    display: grid;
+    gap: 14px;
+}
+
+@media (min-width: 720px) {
+    .form-grid[b-eurq976lcb] {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Brug .mb-3 i markup – her gives spacing konsistent */
+.mb-3[b-eurq976lcb] {
+    margin-bottom: .85rem;
+}
+
+/* ======= Labels ======= */
+.form-label[b-eurq976lcb] {
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: .35rem;
+    display: inline-block;
+}
+
+/* ======= Inputs ======= */
+.form-control[b-eurq976lcb] {
+    width: 100%;
+    background: var(--elev-2);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .06s ease;
+    outline: none;
+}
+
+    .form-control[b-eurq976lcb]::placeholder {
+        color: #7f8aa5;
+    }
+
+    .form-control:hover[b-eurq976lcb] {
+        background: #21293b;
+    }
+
+    .form-control:focus[b-eurq976lcb] {
+        border-color: var(--focus);
+        box-shadow: var(--ring);
+        transform: translateY(-1px);
+    }
+
+    /* Valgfri invalid-stil hvis du sætter .is-invalid i C# */
+    .form-control.is-invalid[b-eurq976lcb] {
+        border-color: #ff5c7a;
+        box-shadow: 0 0 0 4px rgba(255,92,122,.18);
+    }
+
+/* ======= Knapper ======= */
+.d-flex[b-eurq976lcb] {
+    display: flex;
+}
+
+.gap-2[b-eurq976lcb] {
+    gap: 8px;
+}
+
+.btn[b-eurq976lcb] {
+    position: relative;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-weight: 800;
+    letter-spacing: .2px;
+    padding: 10px 14px;
+    line-height: 1;
+    box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    transition: transform .06s ease, box-shadow .18s ease, filter .15s ease, background .15s ease, border-color .15s ease;
+    outline: none;
+}
+
+    .btn[b-eurq976lcb]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 40%);
+        pointer-events: none;
+    }
+
+    .btn:hover[b-eurq976lcb] {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .btn:active[b-eurq976lcb] {
+        transform: translateY(0);
+        box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    }
+
+    .btn:focus-visible[b-eurq976lcb] {
+        box-shadow: 0 0 0 3px rgba(155,193,255,.45), 0 10px 24px rgba(91,140,255,.25);
+        outline: none;
+    }
+
+/* Primær og Succes (matcher dine klasser) */
+.btn-primary[b-eurq976lcb] {
+    background: var(--primary);
+    border-color: #3a66cc; /* tidligere color-mix */
+    color: white;
+}
+
+.btn-success[b-eurq976lcb] {
+    background: #0b6840; /* lysere grøn */
+    border-color: #1ea86f; /* tidligere color-mix */
+    color: white; /* hvid tekst for kontrast */
+}
+
+    .btn-success:hover[b-eurq976lcb] {
+        filter: brightness(1.08);
+    }
+
+    .btn-success:active[b-eurq976lcb] {
+        filter: brightness(.95);
+    }
+
+/* Disabled stil hvis du sætter disabled på knapperne */
+.btn:disabled[b-eurq976lcb] {
+    filter: saturate(.5) brightness(.85);
+    cursor: not-allowed;
+}
+
+/* ======= Alerts ======= */
+.alert[b-eurq976lcb] {
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    background: var(--elev);
+    color: var(--ink);
+}
+
+.alert-info[b-eurq976lcb] {
+    border-left-color: var(--primary);
+    background: #1a2337; /* mørk blålig tint */
+}
+
+/* ======= Image preview ======= */
+img[alt="Billede"][b-eurq976lcb],
+img[b-eurq976lcb] {
+    display: block;
+    max-width: min(100%, 900px);
+    height: auto;
+    margin-top: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: #0b0e14;
+    box-shadow: 0 14px 40px rgba(0,0,0,.45);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .2s ease;
+}
+
+    img:hover[b-eurq976lcb] {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 60px rgba(0,0,0,.5);
+        border-color: #2d3a56;
+    }
+
+/* ======= Små tweaks / spacing ======= */
+h3 + .mb-3[b-eurq976lcb] {
+    margin-top: .25rem;
+}
+
+:host [b-eurq976lcb]::selection {
+    background: rgba(91,140,255,.35);
+    color: white;
+}
+
+/* ======= Reduced motion ======= */
+@media (prefers-reduced-motion: reduce) {
+    *[b-eurq976lcb] {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+.preview-image[b-eurq976lcb] {
+    display: block;
+    max-width: min(100%, 900px);
+    height: auto;
+    margin-top: 1.25rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: #0b0e14;
+    box-shadow: 0 14px 40px rgba(0,0,0,.45);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .2s ease;
+}
+
+    .preview-image:hover[b-eurq976lcb] {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 60px rgba(0,0,0,.5);
+        border-color: #2d3a56;
+    }
+/* /Layout/MainLayout.razor.rz.scp.css */
+/* Variabler holdes scoped til MainLayout */
+.main-layout[b-qe9nw4g9y0] {
+    /* Tema */
+    --bg: #0f1115;
+    --bg-elev: #151922;
+    --bg-elev-2: #1b2130;
+    --ink: #e7ebf3;
+    --muted: #a6b0c3;
+    --border: #263044;
+    --focus: #9bc1ff;
+    /* FX */
+    --radius-lg: 16px;
+    --radius: 12px;
+    --shadow-lg: 0 20px 50px rgba(0,0,0,.45);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    min-height: 100dvh;
+    color: var(--ink);
+    background: radial-gradient(1200px 700px at 5% -10%, rgba(91,140,255,.10), transparent 60%), radial-gradient(1000px 600px at 95% -20%, rgba(39,217,128,.08), transparent 55%), var(--bg);
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+/* Topbar wrapper (den container <NavMenu />) */
+.nav-bar[b-qe9nw4g9y0] {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    /* Skaber en let separation under topbaren */
+    box-shadow: 0 1px 0 var(--border);
+    background: rgba(21,25,34,.85);
+    backdrop-filter: blur(8px);
+}
+
+/* Hovedindhold */
+.main-content[b-qe9nw4g9y0] {
+    padding: clamp(16px, 3.2vw, 40px);
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Valgfri card-stil til sektioner */
+.card[b-qe9nw4g9y0], .section[b-qe9nw4g9y0] {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: clamp(14px, 2.2vw, 22px);
+}
+
+/* Typografi helpers � for et strammere look */
+h1[b-qe9nw4g9y0], h2[b-qe9nw4g9y0], h3[b-qe9nw4g9y0], h4[b-qe9nw4g9y0] {
+    letter-spacing: .2px;
+    line-height: 1.2;
+}
+
+p[b-qe9nw4g9y0] {
+    color: var(--ink);
+    opacity: .92;
+}
+
+/* Fokus, tilg�ngelighed */
+:focus-visible[b-qe9nw4g9y0] {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* Sm� utils (scoped) */
+.mt-3[b-qe9nw4g9y0] {
+    margin-top: 1rem;
+}
+
+.mb-3[b-qe9nw4g9y0] {
+    margin-bottom: 1rem;
+}
+
+.d-flex[b-qe9nw4g9y0] {
+    display: flex;
+}
+
+.gap-2[b-qe9nw4g9y0] {
+    gap: .5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *[b-qe9nw4g9y0] {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+/* /Layout/NavMenu.razor.rz.scp.css */
+/* Variabler holdes scoped til NavMenu */
+.navbar[b-mb8xjxo89d] {
+    --bg: #151922;
+    --ink: #e7ebf3;
+    --muted: #a6b0c3;
+    --border: #263044;
+    --primary: #5b8cff;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* plads til evt. h�jre-side controls senere */
+    gap: clamp(8px, 2vw, 20px);
+    padding: clamp(10px, 1.8vw, 16px) clamp(14px, 2.4vw, 24px);
+    background: rgba(21,25,34,.88); /* i stedet for color-mix */
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+}
+
+/* Link-liste spaner fra venstre mod h�jre */
+.nav-links[b-mb8xjxo89d] {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.6vw, 16px);
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+/* Knap-agtige links */
+.nav-button[b-mb8xjxo89d] {
+    --btn-bg: #1b2130;
+    --btn-border: var(--border);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: .2px;
+    text-decoration: none;
+    line-height: 1;
+    transition: transform .06s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+    box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    will-change: transform;
+    outline: none;
+    white-space: nowrap;
+}
+
+    /* Shine-effekt og hover */
+    .nav-button[b-mb8xjxo89d]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 40%);
+        pointer-events: none;
+    }
+
+    .nav-button:hover[b-mb8xjxo89d] {
+        background: #20283a;
+        border-color: #2d3a56;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    }
+
+    .nav-button:active[b-mb8xjxo89d] {
+        transform: translateY(0);
+        box-shadow: 0 2px 0 rgba(0,0,0,.25);
+    }
+
+    /* Aktiv side (hvis du s�tter klasse 'active' i NavLink) */
+    .nav-button.active[b-mb8xjxo89d],
+    .nav-button[aria-current="page"][b-mb8xjxo89d] {
+        border-color: #3a66cc;
+        background: #1e2740; /* m�rkere bl�lig baggrund */
+        color: white;
+        box-shadow: 0 8px 22px rgba(91,140,255,.28);
+    }
+
+    /* Fokus */
+    .nav-button:focus-visible[b-mb8xjxo89d] {
+        box-shadow: 0 0 0 3px rgba(91,140,255,.45), 0 8px 22px rgba(91,140,255,.28);
+        outline: none;
+    }
+
+/* Responsiv: komprimer paddings p� small */
+@media (max-width: 640px) {
+    .navbar[b-mb8xjxo89d] {
+        padding: 10px 12px;
+    }
+
+    .nav-button[b-mb8xjxo89d] {
+        padding: 9px 12px;
+        border-radius: 10px;
+    }
+}
