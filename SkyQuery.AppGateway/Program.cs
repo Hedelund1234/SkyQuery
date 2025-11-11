@@ -26,23 +26,30 @@ builder.Services.AddControllers().AddDapr();
 builder.Services.AddOpenApi();
 
 // ===== CORS =====
+const string PagesPolicy = "PagesPolicy";
+var allowedOrigins = new[]
+{
+    "https://www.skyquery.hedef.dk",
+    // Hvis du nogensinde bruger uden www, så tilføj også:
+    // "https://skyquery.hedef.dk"
+};
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy(PagesPolicy, p =>
     {
         if (builder.Environment.IsDevelopment())
         {
-            policy
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+            p.AllowAnyOrigin()
+             .AllowAnyHeader()
+             .AllowAnyMethod();
         }
         else
         {
-            policy
-                .WithOrigins("https://www.skyquery.hedef.dk")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+            p.WithOrigins(allowedOrigins)
+             .AllowAnyHeader()
+             .AllowAnyMethod();
+            // Brug IKKE .AllowCredentials() med Authorization-header/JWT – kun hvis du har cookies
         }
     });
 });
@@ -137,7 +144,8 @@ if (!daprPresent)
 
 
 // ===== Aktiver CORS =====
-app.UseCors();
+app.UseRouting();
+app.UseCors(PagesPolicy);
 
 
 app.UseAuthentication();
@@ -150,6 +158,8 @@ app.UseCloudEvents();
 // needed for Dapr pub/sub routing
 app.MapSubscribeHandler();
 
-app.MapControllers();
+app.MapControllers()
+   .RequireCors(PagesPolicy);
+
 
 app.Run();
