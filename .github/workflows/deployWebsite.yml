@@ -1,16 +1,10 @@
-name: Manual Deploy — SkyQuery.Website to GitHub Pages
+name: Manual Deploy — SkyQuery.Website → gh-pages
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: {}   # kun manuelt
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  contents: write         # krævet af peaceiris til at pushe gh-pages
 
 env:
   PROJECT_PATH: SkyQuery.Website/SkyQuery.Website.csproj
@@ -18,7 +12,7 @@ env:
   WWWROOT: out/wwwroot
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,26 +29,17 @@ jobs:
       - name: Publish (Release)
         run: dotnet publish $PROJECT_PATH -c Release -o $OUT_DIR
 
-      - name: Add routing + CNAME + .nojekyll
+      - name: Client-side routing + CNAME + .nojekyll
         run: |
           cp $WWWROOT/index.html $WWWROOT/404.html
           echo "www.cv.hedef.dk" > $WWWROOT/CNAME
           touch $WWWROOT/.nojekyll
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: ${{ env.WWWROOT }}
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ${{ env.WWWROOT }}
+          # optional: bevar historik hvis du vil
+          keep_files: false
