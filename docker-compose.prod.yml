@@ -12,7 +12,7 @@ services:
     env_file:
       - ./SkyQuery.AppGateway/.env
     environment:
-      - ASPNETCORE_URLS=http://+:8080 # App lytter på 8080 inde i containeren
+      - ASPNETCORE_URLS=http://+:8080 # App lytter pÃ¥ 8080 inde i containeren
     ports:
       - "8010:8080" # ekstern adgang: http://HOST:8010          
     depends_on:
