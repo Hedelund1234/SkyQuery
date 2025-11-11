@@ -28,8 +28,8 @@ jobs:
 
         # Kør dit update script
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$SSH_USERNAME@$SSH_HOST" << EOF
-          cd ~/Yarp/docker-setup
-          ./update_yarp.sh
+          cd ~/SkyQueryProject/docker
+          ./update_all.sh
         EOF
       env:
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
