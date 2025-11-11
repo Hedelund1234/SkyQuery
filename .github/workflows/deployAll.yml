@@ -1,0 +1,37 @@
+name: Deploy everything to Server
+
+on:
+  workflow_dispatch:  # Trigger workflow manuelt
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH and Deploy
+      run: |
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh  # Gør mappen privat
+
+        # Konverter linjeskift og gem nøglen korrekt
+        echo -e "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa  # Sørg for at filen er privat
+
+        ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts  # Sikre at SSH kan bruge den
+
+        # Test SSH-forbindelsen
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$SSH_USERNAME@$SSH_HOST" "echo SSH forbindelse virker!"
+
+        # Kør dit update script
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$SSH_USERNAME@$SSH_HOST" << EOF
+          cd ~/Yarp/docker-setup
+          ./update_yarp.sh
+        EOF
+      env:
+        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
