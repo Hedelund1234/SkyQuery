@@ -64,6 +64,7 @@ namespace SkyQuery.ImageService.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError("Box Calculation went wrong UserId: {userId} Mgrs: {mgrs} Exception: {ex}", request.UserId, request.Mgrs, ex);
+                throw new InvalidDataException($"Box Calculation went wrong for request from  {request.UserId} - Mgrs was requested: {request.Mgrs}");
             }
 
             var mgrsForInput = request.Mgrs.Replace(" ", "");

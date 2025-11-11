@@ -23,6 +23,10 @@ namespace SkyQuery.AppGateway.Controllers
         [Authorize(Roles = "operator")] // Can toggle auth on/off by outcommenting
         public IActionResult PostImageRequest([FromBody] ImageRequest request)
         {
+            if (request.Mgrs.Length < 12 || request.Mgrs.Length > 15)
+            {
+                return BadRequest("MGRS not valid");
+            }
             try
             {
                 // Gets token from the request header
