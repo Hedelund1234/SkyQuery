@@ -1,0 +1,45 @@
+name: Manual Deploy — SkyQuery.Website → gh-pages
+
+on:
+  workflow_dispatch: {}   # Kun manuel kørsel
+
+permissions:
+  contents: write         # Tillader push til gh-pages
+
+env:
+  PROJECT_PATH: SkyQuery.Website/SkyQuery.Website.csproj
+  OUT_DIR: out
+  WWWROOT: out/wwwroot
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore $PROJECT_PATH
+
+      - name: Publish (Release)
+        run: dotnet publish $PROJECT_PATH -c Release -o $OUT_DIR
+
+      - name: Configure site (404, CNAME, nojekyll)
+        run: |
+          cp $WWWROOT/index.html $WWWROOT/404.html
+          echo "www.skyquery.hedef.dk" > $WWWROOT/CNAME
+          touch $WWWROOT/.nojekyll
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ${{ env.WWWROOT }}
+          keep_files: false
