@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,12 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+// Indlæs .env hvis den findes lokalt
+if (builder.Environment.IsDevelopment()) Env.Load(); // valgfrit: Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 
 
 builder.Services.AddDbContext<AuthServiceDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// nu læser du som før
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["Key"];
 

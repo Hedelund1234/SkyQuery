@@ -5,6 +5,7 @@ using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Application.Services;
 using SkyQuery.AppGateway.Infrastructure.TempStorage;
 using System.Text;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,12 @@ builder.Services.AddCors(options =>
 
 
 // Auth
+// Indlæs .env hvis den findes lokalt
+if (builder.Environment.IsDevelopment()) Env.Load(); // valgfrit: Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+
+builder.Configuration.AddEnvironmentVariables();
+
+// nu læser du som før
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["Key"];
 

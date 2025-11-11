@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  appgateway:
+    image: ghcr.io/hedelund1234/skyquery-appgateway:latest
+    env_file:
+      - ../SkyQuery.AppGateway/.env
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    volumes:
+      - skyquery-images:/data/images
+    depends_on:
+      - authservice
+      - imageservice
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+
+  appgateway-dapr:
+    image: daprio/daprd:1.13.5
+    command: ["./daprd",
+      "-app-id","skyquery-appgateway-dapr",
+      "-app-port","8080",
+      "-components-path","/components"]
+    volumes:
+      - ./components:/components
+    network_mode: "service:appgateway"
+    depends_on:
+      - appgateway
+    restart: unless-stopped
+
+  authservice:
+    image: ghcr.io/hedelund1234/skyquery-authservice:latest
+    env_file:
+      - ../SkyQuery.AuthService/.env
+    environment:
+      - ASPNETCORE_URLS=http://+:8081
+    restart: unless-stopped
+
+  authservice-dapr:
+    image: daprio/daprd:1.13.5
+    command: ["./daprd",
+      "-app-id","skyquery-authservice-dapr",
+      "-app-port","8081",
+      "-components-path","/components"]
+    volumes:
+      - ./components:/components
+    network_mode: "service:authservice"
+    depends_on:
+      - authservice
+    restart: unless-stopped
+
+  imageservice:
+    image: ghcr.io/hedelund1234/skyquery-imageservice:latest
+    env_file:
+      - ../SkyQuery.ImageService/.env
+    environment:
+      - ASPNETCORE_URLS=http://+:8082
+    restart: unless-stopped
+
+  imageservice-dapr:
+    image: daprio/daprd:1.13.5
+    command: ["./daprd",
+      "-app-id","skyquery-imageservice-dapr",
+      "-app-port","8082",
+      "-components-path","/components"]
+    volumes:
+      - ./components:/components
+    network_mode: "service:imageservice"
+    depends_on:
+      - imageservice
+    restart: unless-stopped
+
+  website:
+    image: ghcr.io/hedelund1234/skyquery-website:latest
+    environment:
+      - ASPNETCORE_URLS=http://+:8083
+      - APPGATEWAY_BASEURL=http://appgateway:8080
+    depends_on:
+      - appgateway
+    ports:
+      - "127.0.0.1:8083:8083"
+    restart: unless-stopped
+
+volumes:
+  skyquery-images:

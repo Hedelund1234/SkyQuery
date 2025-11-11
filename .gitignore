@@ -364,3 +364,9 @@ FodyWeavers.xsd
 /SkyQuery.AuthService/.env
 /SkyQuery.ImageService/.env
 /SkyQuery.AppGateway/.env
+
+# ----------------------------------------
+# SkyQuery environment files
+# ----------------------------------------
+**/.env
+!**/.env.example

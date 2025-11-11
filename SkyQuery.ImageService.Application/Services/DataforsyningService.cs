@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Application.Interfaces.Persistence;
 using SkyQuery.ImageService.Domain.Converters;
@@ -21,7 +22,7 @@ namespace SkyQuery.ImageService.Application.Services
 
         //private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar";
         //private readonly string _layer = "jylland_2011_10cm";
-        //private readonly string _token = "a072fc76ce87ca3c3997e2c6a1a8b396";
+        //private readonly string _token = "";
         //private readonly int _width = 800;
         //private readonly int _height = 800;
 
@@ -29,7 +30,7 @@ namespace SkyQuery.ImageService.Application.Services
 
         private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar_DAF";
         private readonly string _layer = "geodanmark_2024_12_5cm";
-        private readonly string _token = "a072fc76ce87ca3c3997e2c6a1a8b396";
+        private readonly string _token;
         private readonly int _width = 1024;
         private readonly int _height = 1024;
 
@@ -37,10 +38,12 @@ namespace SkyQuery.ImageService.Application.Services
 
         private string _bbox = "";
 
-        public DataforsyningService(IHttpClientFactory httpClientFactory, ILogger<DataforsyningService> logger, IDataforsyningImageRepository imageRepository)
+        public DataforsyningService(IHttpClientFactory httpClientFactory, ILogger<DataforsyningService> logger, IDataforsyningImageRepository imageRepository, IConfiguration cfg)
         {
             _httpClient = httpClientFactory.CreateClient("dataforsyningclient");
             _logger = logger;
+            _token = cfg["Dataforsyningen:ApiKey"]
+                ?? throw new InvalidOperationException("Dataforsyningen:ApiKey mangler");
             _bbox = "";
             _imageRepository = imageRepository;
         }

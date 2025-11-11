@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 //Den bliver “importeret” via global using i .NET 8’s Aspire-pakker,
 //så din lokale using-linje bliver markeret som ubrugt, selvom metoden reelt kommer fra
@@ -12,6 +13,15 @@ using SkyQuery.ImageService.Infrastructure.Persistence;
 using SkyQuery.ImageService.Infrastructure.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Lokalt: .env
+if (builder.Environment.IsDevelopment())
+{
+    try { Env.Load(); } catch { /* ignore */ }
+}
+
+// Env vars > appsettings
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 
@@ -38,7 +48,6 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ImageServiceDbContext>(options =>
     options.UseSqlServer(conn));
 
-
 builder.Services.Configure<ActorTokenOptions>(builder.Configuration.GetSection("Jwt"));
 
 // Dependency Injections
@@ -49,7 +58,6 @@ builder.Services.AddSingleton<IActorTokenValidator, ActorTokenValidator>(); // S
 // Registers DaprClient in DI
 builder.Services.AddDaprClient();
 builder.Services.AddControllers().AddDapr(); // vigtigt
-builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

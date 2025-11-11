@@ -44,6 +44,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyQuery.AppGateway.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyQuery.AppGateway.Application", "SkyQuery.AppGateway.Application\SkyQuery.AppGateway.Application.csproj", "{215629EF-04FE-4FEF-A0BD-7D8A392927F6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{98ACAD8B-B585-4B58-8B73-BE91369DA336}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.prod.yml = docker-compose.prod.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{1DC687A8-77A9-4B41-B6E8-D2451412F443}"
+	ProjectSection(SolutionItems) = preProject
+		pubsub.yaml = pubsub.yaml
+		statestore.yaml = statestore.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +150,7 @@ Global
 		{5ADD08F0-4456-45BB-9F86-944E39BE3E9D} = {F58634ED-6E94-4830-9CB4-60F2DDD86607}
 		{0A47B1D5-864E-4C7D-A25D-A055F2878888} = {F58634ED-6E94-4830-9CB4-60F2DDD86607}
 		{215629EF-04FE-4FEF-A0BD-7D8A392927F6} = {F58634ED-6E94-4830-9CB4-60F2DDD86607}
+		{1DC687A8-77A9-4B41-B6E8-D2451412F443} = {98ACAD8B-B585-4B58-8B73-BE91369DA336}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B81A33B-32CD-4E65-81E6-9BA2CCD2784E}
