@@ -5,3 +5,6 @@ The solution is built using .NET Aspire and Dapr, enabling loosely coupled commu
 Deployed with Docker Compose, the system emphasizes modern DevOps practices and scalability through containerization and sidecar patterns. The project also explores Security-by-design and Privacy-by-Design principles, integrating authentication, authorization and zero trust principles throughout the stack.
 
 Overall, SkyQuery demonstrates a real-world application of miicroservice design, Dapr integration, and cloud-ready architecture in a scenario inspired by tactical intelligence and satellite data interoperability.
+
+
+<img width="929" height="1046" alt="image" src="https://github.com/user-attachments/assets/b645554a-09d3-4c54-9a04-f143357145b0" />
