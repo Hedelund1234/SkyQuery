@@ -25,7 +25,7 @@ services:
       "-app-port","8080",
       "-components-path","/components"]
     volumes:
-      - ./components:/components
+      - ./:/components:ro
     network_mode: "service:appgateway"
     depends_on:
       - appgateway
@@ -46,7 +46,7 @@ services:
       "-app-port","8081",
       "-components-path","/components"]
     volumes:
-      - ./components:/components
+      - ./:/components:ro
     network_mode: "service:authservice"
     depends_on:
       - authservice
@@ -67,7 +67,7 @@ services:
       "-app-port","8082",
       "-components-path","/components"]
     volumes:
-      - ./components:/components
+      - ./:/components:ro
     network_mode: "service:imageservice"
     depends_on:
       - imageservice
