@@ -1,5 +1,5 @@
 self.assetsManifest = {
-  "version": "wNsQOr9y",
+  "version": "CEkPn7KJ",
   "assets": [
     {
       "hash": "sha256-6TdQvang6K8DAX/HX0RdadnrbE/McqLlOzlzK+LtMgQ=",
@@ -86,8 +86,8 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.JSInterop.fj7t13n2sr.wasm"
     },
     {
-      "hash": "sha256-Xhc8/VnXTH7Q4XlYJhXUt1M2/g6ybEeEO5kQpxP7/Ks=",
-      "url": "_framework/SkyQuery.Website.6v8j5c6oei.wasm"
+      "hash": "sha256-Za+Y9Ml2sizmw0yF6C9t2QU7T+SrPKmXz/4ofkWV83A=",
+      "url": "_framework/SkyQuery.Website.vnse80o1s7.wasm"
     },
     {
       "hash": "sha256-F78Tblfeu6CukCMStjs4X1AzMa8x7Nd5BtI5BSJlQCk=",
@@ -182,7 +182,7 @@ self.assetsManifest = {
       "url": "_framework/System.Threading.6wxzpv4ki1.wasm"
     },
     {
-      "hash": "sha256-jjOpjC3i+JaArNkd4XzLUTe7h1H47TE7QGPjGrWOSAs=",
+      "hash": "sha256-GJ3fwYin/ZJOToddkzxUKfNOND3+N0folMVEX7onFN4=",
       "url": "_framework/blazor.boot.json"
     },
     {
@@ -222,7 +222,7 @@ self.assetsManifest = {
       "url": "appsettings.Development.json"
     },
     {
-      "hash": "sha256-1XO3pKCaZlGhYT4wkJ57nj3+k7iL4vvmh7pytpLg7UE=",
+      "hash": "sha256-cqXMQcaoheeGnZCG1ePy6NpkeEU7rKfRI1npMxJtoSg=",
       "url": "appsettings.Production.json"
     },
     {

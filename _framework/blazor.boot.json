@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "SkyQuery.Website",
   "resources": {
-    "hash": "sha256-Cur/T1dxK7/g/CFWPgFwZGzjIevRVay9M06c7XIRIzI=",
+    "hash": "sha256-Y8hKaxhKYl+evTwKwK4PtKsZ0n0jHvhVgKG+dWClQq4=",
     "fingerprinting": {
       "Blazored.LocalStorage.12n6dz54qr.wasm": "Blazored.LocalStorage.wasm",
       "Microsoft.AspNetCore.Components.35gkrj5qj1.wasm": "Microsoft.AspNetCore.Components.wasm",
@@ -46,7 +46,7 @@
       "System.Text.RegularExpressions.p15f646b9l.wasm": "System.Text.RegularExpressions.wasm",
       "System.Threading.6wxzpv4ki1.wasm": "System.Threading.wasm",
       "System.Private.CoreLib.d0w01hzfv6.wasm": "System.Private.CoreLib.wasm",
-      "SkyQuery.Website.6v8j5c6oei.wasm": "SkyQuery.Website.wasm",
+      "SkyQuery.Website.vnse80o1s7.wasm": "SkyQuery.Website.wasm",
       "dotnet.js": "dotnet.js",
       "dotnet.native.l4ptthxatg.js": "dotnet.native.js",
       "dotnet.native.d2w7colv7e.wasm": "dotnet.native.wasm",
@@ -115,7 +115,7 @@
       "System.Text.Json.nvwhsl6p8b.wasm": "sha256-s3Csw4PzxS89f8d9qysSYsnBiZYkKY6LpZciKKsBz/U=",
       "System.Text.RegularExpressions.p15f646b9l.wasm": "sha256-TT3D+CsGEdVlPVOhsaq/jFfdaoyL8W5TYM6pCC35C14=",
       "System.Threading.6wxzpv4ki1.wasm": "sha256-qpTsdttgwFKu3sCPl9Qw0nYZISOGaHpAJFTWUzt9Xzw=",
-      "SkyQuery.Website.6v8j5c6oei.wasm": "sha256-Xhc8/VnXTH7Q4XlYJhXUt1M2/g6ybEeEO5kQpxP7/Ks="
+      "SkyQuery.Website.vnse80o1s7.wasm": "sha256-Za+Y9Ml2sizmw0yF6C9t2QU7T+SrPKmXz/4ofkWV83A="
     }
   },
   "cacheBootResources": true,
