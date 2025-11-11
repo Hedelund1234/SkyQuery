@@ -85,6 +85,11 @@ namespace SkyQuery.ImageService.Application.Services
                 throw new Exception();
             }
 
+            if (_bbox == "")
+            {
+                _logger.LogInformation("Box for {request.UserId} was empty", request.UserId);
+                throw new InvalidDataException($"Box size was empty for request from  {request.UserId} - Mgrs was requested: {request.Mgrs}");
+            }
 
             var url = $"{_baseUrl}?service=WMS&request=GetMap&version=1.3.0" +
                         $"&layers={_layer}&styles=&crs=EPSG:3857&bbox={_bbox}" +
@@ -103,6 +108,11 @@ namespace SkyQuery.ImageService.Application.Services
                 }
 
                 var result = await response.Content.ReadAsByteArrayAsync();
+                if (result.Length == 388) // This is the size of the "no data" image from DF
+                {
+                    _logger.LogInformation("No picture found {Status} for {Mgrs}.", (int)response.StatusCode, request.Mgrs);
+                    throw new InvalidDataException($"Response from DF was empty for request from  {request.UserId} - Mgrs was requested: {request.Mgrs}");
+                }
                 resultImage.Image = result;
                 _logger.LogInformation("External Api successfully called for UserId: {userId} Mgrs: {mgrs}", request.UserId, request.Mgrs);
 
