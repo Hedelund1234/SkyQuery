@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SkyQuery.AppGateway.Application.Interfaces;
-using SkyQuery.AppGateway.Application.Services;
+using SkyQuery.AppGateway.Infrastructure.Services;
 using SkyQuery.AppGateway.Infrastructure.TempStorage;
 using System.Text;
-using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +30,7 @@ const string PagesPolicy = "PagesPolicy";
 var allowedOrigins = new[]
 {
     "https://www.skyquery.hedef.dk",
-    // Hvis du nogensinde bruger uden www, så tilføj også:
+    // Remove // below if domain is ever used without www
     // "https://skyquery.hedef.dk"
 };
 

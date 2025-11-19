@@ -6,10 +6,10 @@ using Microsoft.Extensions.Http.Resilience; // Used for HttpClient resilience po
 using Polly;
 using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Application.Interfaces.Persistence;
-using SkyQuery.ImageService.Application.Services;
 using SkyQuery.ImageService.Domain.Entities.Validation;
 using SkyQuery.ImageService.Infrastructure.Data;
 using SkyQuery.ImageService.Infrastructure.Persistence;
+using SkyQuery.ImageService.Infrastructure.Services;
 using SkyQuery.ImageService.Infrastructure.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
