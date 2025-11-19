@@ -2,6 +2,7 @@ using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 //Den bliver “importeret” via global using i .NET 8’s Aspire-pakker,
 //så din lokale using-linje bliver markeret som ubrugt, selvom metoden reelt kommer fra
+using Microsoft.Extensions.Http.Resilience; // Used for HttpClient resilience policies
 using Polly;
 using SkyQuery.ImageService.Application.Interfaces;
 using SkyQuery.ImageService.Application.Interfaces.Persistence;
