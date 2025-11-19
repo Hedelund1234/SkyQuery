@@ -2,8 +2,13 @@
 using Microsoft.Extensions.Logging;
 using SkyQuery.AppGateway.Application.Interfaces;
 using SkyQuery.AppGateway.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SkyQuery.AppGateway.Application.Services
+namespace SkyQuery.AppGateway.Infrastructure.Services
 {
     public class ImageService : IImageService
     {

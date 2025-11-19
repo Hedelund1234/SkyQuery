@@ -8,25 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SkyQuery.ImageService.Application.Services
+namespace SkyQuery.ImageService.Infrastructure.Services
 {
     public class DataforsyningService : IDataforsyningService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<DataforsyningService> _logger;
         private readonly IDataforsyningImageRepository _imageRepository;
-
-        //private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar";
-        //private readonly string _layer = "jylland_2011_10cm";
-        //private readonly string _token = "";
-        //private readonly int _width = 800;
-        //private readonly int _height = 800;
-
-        //private readonly int _areaSize = 5000;
 
         private readonly string _baseUrl = "https://api.dataforsyningen.dk/orto_foraar_DAF";
         private readonly string _layer = "geodanmark_2024_12_5cm";
@@ -104,7 +95,7 @@ namespace SkyQuery.ImageService.Application.Services
                                         or HttpStatusCode.NotFound) // 404
                 {
                     _logger.LogInformation("Permanent DF-fejl {Status} for {Mgrs}. Sender til DLQ.", (int)response.StatusCode, request.Mgrs);
-                   
+
                     throw new InvalidDataException($"Permanent DF-fejl {(int)response.StatusCode}.");
                 }
 
