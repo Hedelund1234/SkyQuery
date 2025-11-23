@@ -6,6 +6,28 @@ const MIN_ZOOM = 6;
 const MAX_ZOOM = 12;
 const INITIAL_ZOOM = 7.2;
 
+// Simplified polygon covering Danmark inkl. Bornholm (lat, lon pairs)
+const DENMARK_POLYGON = [
+    [57.752, 7.9], [56.9, 8.05], [56.6, 8.7], [56.4, 8.6], [55.9, 8.2], [55.5, 8.5], [55.3, 8.4], [55.05, 8.7],
+    [55.0, 9.4], [55.3, 9.8], [55.45, 10.5], [55.5, 10.95], [55.75, 11.05], [55.7, 11.7], [55.3, 12.3],
+    [55.2, 12.7], [55.0, 12.9], [54.6, 11.7], [54.6, 11.3], [54.85, 10.9], [55.0, 10.6], [55.1, 10.1],
+    [55.35, 9.7], [55.65, 9.8], [55.9, 10.4], [56.2, 10.7], [56.4, 10.8], [56.7, 10.7], [56.9, 10.4],
+    [57.0, 10.0], [57.2, 9.7], [57.3, 9.0], [57.4, 8.6], [57.6, 8.3], [57.75, 8.1], [57.752, 7.9],
+    // Bornholm
+    [55.35, 14.6], [55.0, 14.8], [55.05, 15.15], [55.3, 15.2], [55.45, 14.95], [55.35, 14.6]
+];
+
+function pointInPolygon(lat, lon, polygon) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+        const intersect = ((yi > lon) !== (yj > lon)) && (lat < (xj - xi) * (lon - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
 function ensureMgrs() {
     if (!mgrsLibPromise) {
         mgrsLibPromise = import('https://cdn.skypack.dev/mgrs');
@@ -61,26 +83,32 @@ function buildGrid(bounds, cellSizeMeters, mgrsLib) {
         for (let x = startX; x < endX; x += cellSizeMeters) {
             const nextX = x + cellSizeMeters;
             const center = fromWebMercator((x + nextX) / 2, (y + nextY) / 2);
+
+            // Beregn præcist MGRS og brug center fra MGRS for at matche grid'et
             const mgrsCode = mgrsLib.forward([center.lon, center.lat], 5);
+            const mgrsCenterPoint = mgrsLib.toPoint(mgrsCode);
+            const mgrsCenter = { lon: mgrsCenterPoint[0], lat: mgrsCenterPoint[1] };
             const zoneBand = mgrsCode.slice(0, 3);
 
             const southWest = fromWebMercator(x, nextY);
             const northEast = fromWebMercator(nextX, y);
 
-            cells.push({
-                mgrs: mgrsCode,
-                zoneBand,
-                bounds: {
-                    minLat: southWest.lat,
-                    minLon: southWest.lon,
-                    maxLat: northEast.lat,
-                    maxLon: northEast.lon
-                },
-                center,
-                row,
-                column,
-                ordered: false
-            });
+            if (pointInPolygon(mgrsCenter.lat, mgrsCenter.lon, DENMARK_POLYGON)) {
+                cells.push({
+                    mgrs: mgrsCode,
+                    zoneBand,
+                    bounds: {
+                        minLat: southWest.lat,
+                        minLon: southWest.lon,
+                        maxLat: northEast.lat,
+                        maxLon: northEast.lon
+                    },
+                    center: mgrsCenter,
+                    row,
+                    column,
+                    ordered: false
+                });
+            }
             column += 1;
         }
         row += 1;
