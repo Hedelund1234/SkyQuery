@@ -116,8 +116,7 @@
     public Task NotifyTileSelected(MgrsSelection selection)
     {
         SelectedTile = selection;
-        StateHasChanged();
-        return Task.CompletedTask;
+        return InvokeAsync(StateHasChanged);
     }
 
     private async Task OrderSelectedTile()
