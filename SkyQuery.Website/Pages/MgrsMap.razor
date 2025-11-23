@@ -1,14 +1,13 @@
 @page "/mgrs-kort"
-@using System.Collections.Generic
 
 <PageTitle>MGRS Danmarkskort</PageTitle>
 
 <div class="page-header">
     <h1>Interaktivt MGRS-kort over Danmark</h1>
     <p class="lead">
-        Kortet er opdelt i 5x5 km MGRS-kasser. Klik på en kasse for at se midtpunktets MGRS-koordinat
-        og bestil satellitbilledet for området. Bestilte kasser bliver automatisk udskiftet
-        med et eksempel på det bestilte satellitbillede.
+        Hele Danmark er opdelt i 5 km x 5 km felter, der følger MGRS. Klik på et felt for at se midtpunktets
+        MGRS-koordinat og bestil satellitbilledet for den valgte kasse. Bestilte felter skifter fra kortvisning til
+        satellitbillede.
     </p>
 </div>
 
@@ -17,15 +16,15 @@
         <div class="map-legend">
             <div class="legend-item">
                 <span class="legend-swatch pending"></span>
-                <span>Ikke bestilt (viser styliseret kortlag)</span>
+                <span>Ikke bestilt (kortbaggrund)</span>
             </div>
             <div class="legend-item">
                 <span class="legend-swatch ordered"></span>
-                <span>Bestilt (viser satellitbilledet)</span>
+                <span>Bestilt (viser satellitbillede)</span>
             </div>
         </div>
 
-        <div class="mgrs-map" role="grid" aria-label="MGRS 5x5 km gitter for Danmark">
+        <div class="mgrs-map" role="grid" aria-label="MGRS 5x5 km gitter for Danmark" style="--cols:@GridColumns; --rows:@GridRows;">
             @foreach (var tile in Tiles)
             {
                 var isOrdered = OrderedTiles.Contains(tile.Code);
@@ -36,15 +35,8 @@
                         aria-pressed="@(selected.ToString().ToLower())"
                         @onclick="() => SelectTile(tile)">
                     <div class="mgrs-label">@tile.Code</div>
-                    <div class="mgrs-region">@tile.Region</div>
-                    @if (!isOrdered)
-                    {
-                        <span class="status-pill">Klik for at bestille</span>
-                    }
-                    else
-                    {
-                        <span class="status-pill ordered-pill">Billede bestilt</span>
-                    }
+                    <div class="mgrs-region">Midtpunkt: @tile.CenterLatLon</div>
+                    <span class="status-pill @(isOrdered ? "ordered-pill" : string.Empty)">@(isOrdered ? "Billede bestilt" : "Klik for at bestille")</span>
                 </button>
             }
         </div>
@@ -54,8 +46,8 @@
         @if (SelectedTile is null)
         {
             <div class="empty-state">
-                <h3>Vælg en kasse</h3>
-                <p>Marker et MGRS-felt på kortet for at se koordinaterne og bestille et satellitbillede.</p>
+                <h3>Vælg en MGRS-kasse</h3>
+                <p>Tryk på et felt for at se MGRS-koordinatet i centrum og bestille satellitbilledet.</p>
             </div>
         }
         else
@@ -75,19 +67,19 @@
 
                 <div class="card-body">
                     <p>
-                        Midtpunktets koordinat anvendes ved bestilling: <strong>@SelectedTile.CenterCoordinate</strong>.
-                        Felterne er placeret i en forsimplet Danmarkskonfiguration, så du hurtigt kan afprøve
-                        bestillingsflowet.
+                        Midtpunktets MGRS-koordinat er <strong>@SelectedTile.Code</strong> og svarer til
+                        lat/lon <strong>@SelectedTile.CenterLatLon</strong>. Felterne er genereret i 5 km intervaller
+                        hen over Danmark med zoneopdeling mellem 32V og 33U.
                     </p>
 
                     <div class="preview">
-                        <div class="preview-image @(isOrdered ? "" : "preview-placeholder")"
+                        <div class="preview-image @(isOrdered ? string.Empty : "preview-placeholder")"
                              style="background-image: url('@(isOrdered ? SatellitePreviewPath : MapTexturePath)');">
                         </div>
                         <div class="preview-text">
-                            <p><strong>Region:</strong> @SelectedTile.Region</p>
+                            <p><strong>Zone:</strong> @SelectedTile.ZoneBand</p>
                             <p><strong>Grid-størrelse:</strong> 5 km x 5 km</p>
-                            <p><strong>Midtpunkt (MGRS):</strong> @SelectedTile.Code</p>
+                            <p><strong>Kolonne/række:</strong> @(SelectedTile.Column + 1) / @(SelectedTile.Row + 1)</p>
                         </div>
                     </div>
                 </div>
@@ -103,39 +95,73 @@
 </div>
 
 @code {
-    private record MgrsTile(string Code, string Region, int Row, int Column, string CenterCoordinate);
+    private record MgrsTile(string Code, string Region, int Row, int Column, string CenterLatLon, string ZoneBand);
 
-    private List<MgrsTile> Tiles { get; } = new()
-    {
-        new("32VNM 38600 71450", "Skagen/Nordjylland", 0, 3, "57.73°N, 10.60°E"),
-        new("32VNL 35250 69750", "Hirtshals", 1, 2, "57.59°N, 10.22°E"),
-        new("32VNL 41250 69250", "Frederikshavn", 1, 3, "57.48°N, 10.53°E"),
-        new("32VNK 32500 67500", "Thy", 2, 2, "57.00°N, 9.12°E"),
-        new("32VNK 40250 66875", "Aalborg", 2, 3, "57.04°N, 9.92°E"),
-        new("32VNK 45750 66000", "Himmerland", 2, 4, "56.93°N, 10.30°E"),
-        new("32VMK 33250 64250", "Midtjylland", 3, 2, "56.40°N, 9.05°E"),
-        new("32VMK 39750 63250", "Viborg", 3, 3, "56.45°N, 9.42°E"),
-        new("32VNL 44500 63750", "Djursland", 3, 4, "56.40°N, 10.70°E"),
-        new("32VMJ 35000 61750", "Vestjylland", 4, 2, "56.10°N, 8.60°E"),
-        new("32VML 40500 61250", "Aarhus", 4, 3, "56.17°N, 10.20°E"),
-        new("32VML 47000 60375", "Randers", 4, 4, "56.45°N, 10.05°E"),
-        new("32VMJ 34250 59250", "Horsens", 5, 2, "55.86°N, 9.85°E"),
-        new("32VML 43250 59250", "Fyn", 5, 3, "55.38°N, 10.33°E"),
-        new("32VML 49500 58500", "Sjælland", 5, 4, "55.61°N, 11.43°E"),
-        new("32VMK 33250 56750", "Sønderjylland", 6, 2, "55.25°N, 9.20°E"),
-        new("32VML 40000 56500", "Storebælt", 6, 3, "55.32°N, 10.90°E"),
-        new("33UMV 05500 57000", "København/Nordsjælland", 6, 5, "55.68°N, 12.57°E"),
-        new("33UMU 02250 54500", "Lolland/Falster", 7, 4, "54.75°N, 11.60°E"),
-        new("32VMG 31000 52500", "Sydjylland", 7, 1, "54.95°N, 8.90°E"),
-        new("32VMH 36000 52000", "Als", 7, 2, "54.90°N, 9.80°E")
-    };
+    private const int GridColumns = 16;
+    private const int GridRows = 12;
+    private const int GridSizeMeters = 5000;
+    private const int EastingStart = 300_000; // Vestlig start i UTM zone 32V
+    private const int NorthingStart = 6_240_000; // Nordlig start omkring Danmark
+    private const double MaxLatitude = 57.85;
+    private const double MinLatitude = 54.56;
+    private const double WestLongitude = 7.90;
+    private const double EastLongitude = 13.05;
 
-    private HashSet<string> OrderedTiles { get; } = new();
+    private readonly List<MgrsTile> Tiles = new();
+    private readonly HashSet<string> OrderedTiles = new();
 
     private MgrsTile? SelectedTile { get; set; }
 
     private const string SatellitePreviewPath = "images/sample-satellite.svg";
     private const string MapTexturePath = "images/denmark-outline.svg";
+
+    protected override void OnInitialized()
+    {
+        GenerateTiles();
+    }
+
+    private void GenerateTiles()
+    {
+        Tiles.Clear();
+
+        var latStep = (MaxLatitude - MinLatitude) / GridRows;
+        var lonStep = (EastLongitude - WestLongitude) / GridColumns;
+
+        for (var row = 0; row < GridRows; row++)
+        {
+            for (var col = 0; col < GridColumns; col++)
+            {
+                var centerLat = MaxLatitude - (row + 0.5) * latStep;
+                var centerLon = WestLongitude + (col + 0.5) * lonStep;
+                var zone = centerLon >= 12.0 ? 33 : 32;
+                var band = GetLatBand(centerLat);
+                var squareId = GetSquareId(row, col);
+
+                var easting = EastingStart + (col * GridSizeMeters);
+                var northing = NorthingStart - (row * GridSizeMeters);
+
+                var mgrs = $"{zone}{band}{squareId} {easting:D5} {northing:D5}";
+                var region = $"Felt {row + 1}-{col + 1}";
+                var latLonText = $"{centerLat:F4}°N, {centerLon:F4}°E";
+
+                Tiles.Add(new MgrsTile(mgrs, region, row, col, latLonText, $"{zone}{band}"));
+            }
+        }
+    }
+
+    private static string GetLatBand(double latitude)
+    {
+        // MGRS lat bands: U covers 48-56, V covers 56-64 for N hemisphere
+        return latitude >= 56.0 ? "V" : "U";
+    }
+
+    private static string GetSquareId(int row, int column)
+    {
+        const string letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // uden I og O
+        var first = letters[(column * 3 + row) % letters.Length];
+        var second = letters[(column * 5 + row * 2) % letters.Length];
+        return $"{first}{second}";
+    }
 
     private void SelectTile(MgrsTile tile)
     {
@@ -149,9 +175,9 @@
             return;
         }
 
-        if (!OrderedTiles.Contains(SelectedTile.Code))
+        if (OrderedTiles.Add(SelectedTile.Code))
         {
-            OrderedTiles.Add(SelectedTile.Code);
+            StateHasChanged();
         }
     }
 }
