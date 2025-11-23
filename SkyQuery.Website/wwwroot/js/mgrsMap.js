@@ -126,7 +126,7 @@ class CustomMgrsMap {
         this.gridCanvas.addEventListener('mousedown', this.boundPanStart);
         window.addEventListener('mouseup', this.boundPanEnd);
         window.addEventListener('mousemove', this.boundPanMove);
-        this.gridCanvas.addEventListener('wheel', this.boundWheel);
+        this.gridCanvas.addEventListener('wheel', this.boundWheel, { passive: false });
         window.addEventListener('resize', this.handleResize);
 
         this.render();
@@ -153,7 +153,7 @@ class CustomMgrsMap {
         const dx = (offsetX / worldSizeCurrent) * worldSizeNew;
         const dy = (offsetY / worldSizeCurrent) * worldSizeNew;
         const adjusted = unproject(newCenterPx.x - dx, newCenterPx.y - dy, this.zoom);
-        this.center = { lat: adjusted.lat, lon: adjusted.lon };
+        this.center = this.clampCenter({ lat: adjusted.lat, lon: adjusted.lon });
         this.render();
     }
 
@@ -172,8 +172,14 @@ class CustomMgrsMap {
         const centerPx = project(this.center.lon, this.center.lat, this.zoom);
         const newCenterPx = { x: centerPx.x - dx, y: centerPx.y - dy };
         const newCenter = unproject(newCenterPx.x, newCenterPx.y, this.zoom);
-        this.center = newCenter;
+        this.center = this.clampCenter(newCenter);
         this.render();
+    }
+
+    clampCenter({ lat, lon }) {
+        const clampedLat = Math.max(this.bounds.minLat, Math.min(this.bounds.maxLat, lat));
+        const clampedLon = Math.max(this.bounds.minLon, Math.min(this.bounds.maxLon, lon));
+        return { lat: clampedLat, lon: clampedLon };
     }
 
     handlePanEnd() {
@@ -211,6 +217,13 @@ class CustomMgrsMap {
 
     highlightSelection(cell) {
         this.selectedMgrs = cell.mgrs;
+        this.render();
+    }
+
+    zoomBy(step) {
+        const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, this.zoom + step));
+        if (newZoom === this.zoom) return;
+        this.zoom = newZoom;
         this.render();
     }
 
@@ -337,6 +350,12 @@ export const MgrsMap = {
 
     markOrdered(mgrsCode) {
         instances.forEach(instance => instance.markOrdered(mgrsCode));
+    },
+
+    zoom(elementId, delta) {
+        const instance = instances.get(elementId);
+        if (!instance) return;
+        instance.zoomBy(delta);
     },
 
     dispose(elementId) {

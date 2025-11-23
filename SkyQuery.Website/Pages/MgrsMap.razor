@@ -29,6 +29,10 @@
         </div>
 
         <div id="mgrsMap" class="mgrs-map" role="application" aria-label="Danmarkskort med MGRS gitter"></div>
+        <div class="map-controls" aria-label="Kortkontroller">
+            <button type="button" @onclick="ZoomIn" aria-label="Zoom ind">+</button>
+            <button type="button" @onclick="ZoomOut" aria-label="Zoom ud">−</button>
+        </div>
         <small class="map-caption">Baggrundskort fra OpenStreetMap | Grid-størrelse: 5 km x 5 km</small>
     </section>
 
@@ -101,10 +105,11 @@
     private string? ActionMessage { get; set; }
     private bool ActionSuccess { get; set; }
 
-    private const double MinLat = 54.56;
-    private const double MaxLat = 57.80;
-    private const double MinLon = 7.90;
-    private const double MaxLon = 13.05;
+    // Dækker Danmark inkl. Bornholm
+    private const double MinLat = 54.4;
+    private const double MaxLat = 57.9;
+    private const double MinLon = 7.6;
+    private const double MaxLon = 15.6;
     private const int CellSizeMeters = 5000;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -159,6 +164,22 @@
         }
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ZoomIn()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("MgrsMap.zoom", "mgrsMap", 1);
+        }
+    }
+
+    private async Task ZoomOut()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("MgrsMap.zoom", "mgrsMap", -1);
+        }
     }
 
     private async Task<string> GetUserId()

@@ -24,6 +24,7 @@
     border-radius: 16px;
     padding: 1rem;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    position: relative;
 }
 
 .map-legend {
@@ -65,6 +66,37 @@
     overflow: hidden;
     position: relative;
     background: #e5e7eb;
+}
+
+.map-controls {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    display: grid;
+    gap: 0.35rem;
+    z-index: 10;
+}
+
+.map-controls button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.map-controls button:hover {
+    background: #f8fafc;
+}
+
+.map-controls button:active {
+    transform: translateY(1px);
 }
 
 .mgrs-map-shell {
