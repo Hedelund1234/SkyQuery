@@ -1,13 +1,14 @@
 @page "/mgrs-kort"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
 <PageTitle>MGRS Danmarkskort</PageTitle>
 
 <div class="page-header">
     <h1>Interaktivt MGRS-kort over Danmark</h1>
     <p class="lead">
-        Hele Danmark er opdelt i 5 km x 5 km felter, der følger MGRS. Klik på et felt for at se midtpunktets
-        MGRS-koordinat og bestil satellitbilledet for den valgte kasse. Bestilte felter skifter fra kortvisning til
-        satellitbillede.
+        Kortet nedenfor bruger et rigtigt baggrundskort over Danmark og viser en 5 km x 5 km MGRS-opdeling. Klik på en kasse for
+        at se midtpunktets MGRS-koordinat og bestil satellitbilledet for området.
     </p>
 </div>
 
@@ -16,30 +17,16 @@
         <div class="map-legend">
             <div class="legend-item">
                 <span class="legend-swatch pending"></span>
-                <span>Ikke bestilt (kortbaggrund)</span>
+                <span>Ikke bestilt</span>
             </div>
             <div class="legend-item">
                 <span class="legend-swatch ordered"></span>
-                <span>Bestilt (viser satellitbillede)</span>
+                <span>Bestilt satellitbillede</span>
             </div>
         </div>
 
-        <div class="mgrs-map" role="grid" aria-label="MGRS 5x5 km gitter for Danmark" style="--cols:@GridColumns; --rows:@GridRows;">
-            @foreach (var tile in Tiles)
-            {
-                var isOrdered = OrderedTiles.Contains(tile.Code);
-                var selected = tile.Code == SelectedTile?.Code;
-                <button class="mgrs-cell @(isOrdered ? "ordered" : "pending") @(selected ? "selected" : string.Empty)"
-                        style="grid-column: @(tile.Column + 1); grid-row: @(tile.Row + 1);"
-                        role="gridcell"
-                        aria-pressed="@(selected.ToString().ToLower())"
-                        @onclick="() => SelectTile(tile)">
-                    <div class="mgrs-label">@tile.Code</div>
-                    <div class="mgrs-region">Midtpunkt: @tile.CenterLatLon</div>
-                    <span class="status-pill @(isOrdered ? "ordered-pill" : string.Empty)">@(isOrdered ? "Billede bestilt" : "Klik for at bestille")</span>
-                </button>
-            }
-        </div>
+        <div id="mgrsMap" class="mgrs-map" role="application" aria-label="Danmarkskort med MGRS gitter"></div>
+        <small class="map-caption">Baggrundskort fra OpenStreetMap | Grid-størrelse: 5 km x 5 km</small>
     </section>
 
     <section class="details" aria-live="polite">
@@ -47,18 +34,18 @@
         {
             <div class="empty-state">
                 <h3>Vælg en MGRS-kasse</h3>
-                <p>Tryk på et felt for at se MGRS-koordinatet i centrum og bestille satellitbilledet.</p>
+                <p>Tryk på en af kasserne på kortet for at se midtpunktets MGRS-koordinat.</p>
             </div>
         }
         else
         {
-            var isOrdered = OrderedTiles.Contains(SelectedTile.Code);
+            var isOrdered = OrderedTiles.Contains(SelectedTile.MgrsCode);
             <div class="card">
                 <div class="card-header">
                     <div>
                         <p class="eyebrow">5x5 km MGRS kasse</p>
-                        <h3>@SelectedTile.Region</h3>
-                        <p class="mgrs-code">@SelectedTile.Code</p>
+                        <h3>Række @(SelectedTile.Row + 1), Kolonne @(SelectedTile.Column + 1)</h3>
+                        <p class="mgrs-code">@SelectedTile.MgrsCode</p>
                     </div>
                     <div class="chip @(isOrdered ? "chip-ordered" : "chip-pending")">
                         @(isOrdered ? "Satellitbillede bestilt" : "Ikke bestilt")
@@ -67,20 +54,19 @@
 
                 <div class="card-body">
                     <p>
-                        Midtpunktets MGRS-koordinat er <strong>@SelectedTile.Code</strong> og svarer til
-                        lat/lon <strong>@SelectedTile.CenterLatLon</strong>. Felterne er genereret i 5 km intervaller
-                        hen over Danmark med zoneopdeling mellem 32V og 33U.
+                        Midtpunktets MGRS-koordinat er <strong>@SelectedTile.MgrsCode</strong> og svarer til
+                        lat/lon <strong>@SelectedTile.CenterLat.ToString("F5")°N, @SelectedTile.CenterLon.ToString("F5")°E</strong>.
+                        Gridet er genereret i 5 km intervaller over Danmarks faktiske udbredelse med OpenStreetMap som baggrund.
                     </p>
 
                     <div class="preview">
-                        <div class="preview-image @(isOrdered ? string.Empty : "preview-placeholder")"
-                             style="background-image: url('@(isOrdered ? SatellitePreviewPath : MapTexturePath)');">
-                        </div>
                         <div class="preview-text">
-                            <p><strong>Zone:</strong> @SelectedTile.ZoneBand</p>
+                            <p><strong>Zone/band:</strong> @SelectedTile.ZoneBand</p>
+                            <p><strong>Midtpunkt:</strong> @SelectedTile.CenterLat.ToString("F5")°N, @SelectedTile.CenterLon.ToString("F5")°E</p>
                             <p><strong>Grid-størrelse:</strong> 5 km x 5 km</p>
-                            <p><strong>Kolonne/række:</strong> @(SelectedTile.Column + 1) / @(SelectedTile.Row + 1)</p>
+                            <p><strong>Række/Kolonne:</strong> @(SelectedTile.Row + 1) / @(SelectedTile.Column + 1)</p>
                         </div>
+                        <div class="preview-image @(isOrdered ? string.Empty : "preview-placeholder")"></div>
                     </div>
                 </div>
 
@@ -95,89 +81,72 @@
 </div>
 
 @code {
-    private record MgrsTile(string Code, string Region, int Row, int Column, string CenterLatLon, string ZoneBand);
+    private record MgrsSelection(string MgrsCode, double CenterLat, double CenterLon, int Row, int Column, string ZoneBand);
 
-    private const int GridColumns = 16;
-    private const int GridRows = 12;
-    private const int GridSizeMeters = 5000;
-    private const int EastingStart = 300_000; // Vestlig start i UTM zone 32V
-    private const int NorthingStart = 6_240_000; // Nordlig start omkring Danmark
-    private const double MaxLatitude = 57.85;
-    private const double MinLatitude = 54.56;
-    private const double WestLongitude = 7.90;
-    private const double EastLongitude = 13.05;
+    private DotNetObjectReference<MgrsMap>? _dotNetRef;
+    private IJSObjectReference? _module;
 
-    private readonly List<MgrsTile> Tiles = new();
     private readonly HashSet<string> OrderedTiles = new();
+    private MgrsSelection? SelectedTile { get; set; }
 
-    private MgrsTile? SelectedTile { get; set; }
+    private const double MinLat = 54.56;
+    private const double MaxLat = 57.80;
+    private const double MinLon = 7.90;
+    private const double MaxLon = 13.05;
+    private const int CellSizeMeters = 5000;
 
-    private const string SatellitePreviewPath = "images/sample-satellite.svg";
-    private const string MapTexturePath = "images/denmark-outline.svg";
-
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        GenerateTiles();
-    }
-
-    private void GenerateTiles()
-    {
-        Tiles.Clear();
-
-        var latStep = (MaxLatitude - MinLatitude) / GridRows;
-        var lonStep = (EastLongitude - WestLongitude) / GridColumns;
-
-        for (var row = 0; row < GridRows; row++)
-        {
-            for (var col = 0; col < GridColumns; col++)
-            {
-                var centerLat = MaxLatitude - (row + 0.5) * latStep;
-                var centerLon = WestLongitude + (col + 0.5) * lonStep;
-                var zone = centerLon >= 12.0 ? 33 : 32;
-                var band = GetLatBand(centerLat);
-                var squareId = GetSquareId(row, col);
-
-                var easting = EastingStart + (col * GridSizeMeters);
-                var northing = NorthingStart - (row * GridSizeMeters);
-
-                var mgrs = $"{zone}{band}{squareId} {easting:D5} {northing:D5}";
-                var region = $"Felt {row + 1}-{col + 1}";
-                var latLonText = $"{centerLat:F4}°N, {centerLon:F4}°E";
-
-                Tiles.Add(new MgrsTile(mgrs, region, row, col, latLonText, $"{zone}{band}"));
-            }
-        }
-    }
-
-    private static string GetLatBand(double latitude)
-    {
-        // MGRS lat bands: U covers 48-56, V covers 56-64 for N hemisphere
-        return latitude >= 56.0 ? "V" : "U";
-    }
-
-    private static string GetSquareId(int row, int column)
-    {
-        const string letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // uden I og O
-        var first = letters[(column * 3 + row) % letters.Length];
-        var second = letters[(column * 5 + row * 2) % letters.Length];
-        return $"{first}{second}";
-    }
-
-    private void SelectTile(MgrsTile tile)
-    {
-        SelectedTile = tile;
-    }
-
-    private void OrderSelectedTile()
-    {
-        if (SelectedTile is null)
+        if (!firstRender)
         {
             return;
         }
 
-        if (OrderedTiles.Add(SelectedTile.Code))
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/mgrsMap.js");
+        _dotNetRef = DotNetObjectReference.Create(this);
+        await _module.InvokeVoidAsync(
+            "MgrsMap.init",
+            "mgrsMap",
+            _dotNetRef,
+            new { minLat = MinLat, maxLat = MaxLat, minLon = MinLon, maxLon = MaxLon, cellSizeMeters = CellSizeMeters },
+            OrderedTiles.ToList());
+    }
+
+    [JSInvokable]
+    public Task NotifyTileSelected(MgrsSelection selection)
+    {
+        SelectedTile = selection;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task OrderSelectedTile()
+    {
+        if (SelectedTile is null || _module is null)
         {
-            StateHasChanged();
+            return;
         }
+
+        if (OrderedTiles.Add(SelectedTile.MgrsCode))
+        {
+            await _module.InvokeVoidAsync("MgrsMap.markOrdered", SelectedTile.MgrsCode);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            try
+            {
+                await _module.InvokeVoidAsync("MgrsMap.dispose", "mgrsMap");
+            }
+            catch
+            {
+                // ignorer oprydningsfejl
+            }
+        }
+
+        _dotNetRef?.Dispose();
     }
 }
