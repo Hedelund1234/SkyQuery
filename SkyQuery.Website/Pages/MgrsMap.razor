@@ -81,7 +81,7 @@
 </div>
 
 @code {
-    private record MgrsSelection(string MgrsCode, double CenterLat, double CenterLon, int Row, int Column, string ZoneBand);
+    public record MgrsSelection(string MgrsCode, double CenterLat, double CenterLon, int Row, int Column, string ZoneBand);
 
     private DotNetObjectReference<MgrsMap>? _dotNetRef;
     private IJSObjectReference? _module;
