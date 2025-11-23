@@ -1,5 +1,8 @@
 @page "/mgrs-kort"
+@using SkyQuery.Website.Interfaces
 @inject IJSRuntime JS
+@inject IImageService ImageService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @implements IAsyncDisposable
 
 <PageTitle>MGRS Danmarkskort</PageTitle>
@@ -75,6 +78,13 @@
                         @(isOrdered ? "Billede bestilt" : "Bestil satellitbillede")
                     </button>
                 </div>
+
+                @if (!string.IsNullOrWhiteSpace(ActionMessage))
+                {
+                    <div class="alert @(ActionSuccess ? "alert-success" : "alert-danger")" role="status">
+                        @ActionMessage
+                    </div>
+                }
             </div>
         }
     </section>
@@ -88,6 +98,8 @@
 
     private readonly HashSet<string> OrderedTiles = new();
     private MgrsSelection? SelectedTile { get; set; }
+    private string? ActionMessage { get; set; }
+    private bool ActionSuccess { get; set; }
 
     private const double MinLat = 54.56;
     private const double MaxLat = 57.80;
@@ -116,6 +128,7 @@
     public Task NotifyTileSelected(MgrsSelection selection)
     {
         SelectedTile = selection;
+        ActionMessage = null;
         return InvokeAsync(StateHasChanged);
     }
 
@@ -126,10 +139,61 @@
             return;
         }
 
-        if (OrderedTiles.Add(SelectedTile.MgrsCode))
+        try
         {
-            await _module.InvokeVoidAsync("MgrsMap.markOrdered", SelectedTile.MgrsCode);
+            var userId = await GetUserId();
+            await ImageService.OrderImage(userId, SelectedTile.MgrsCode);
+
+            if (OrderedTiles.Add(SelectedTile.MgrsCode))
+            {
+                await _module.InvokeVoidAsync("MgrsMap.markOrdered", SelectedTile.MgrsCode);
+            }
+
+            ActionSuccess = true;
+            ActionMessage = $"✅ Billede bestilt for {SelectedTile.MgrsCode}";
         }
+        catch (Exception ex)
+        {
+            ActionSuccess = false;
+            ActionMessage = $"❌ Kunne ikke bestille: {ex.Message}";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<string> GetUserId()
+    {
+        var raw = await LocalStorage.GetItemAsStringAsync("authToken");
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            throw new InvalidOperationException("Auth token not found");
+        }
+
+        string token;
+        try
+        {
+            token = await LocalStorage.GetItemAsStringAsync("authToken") ?? string.Empty;
+        }
+        catch
+        {
+            throw new InvalidOperationException("authToken is not valid");
+        }
+
+        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+
+        var userId = jwt.Claims
+            .FirstOrDefault(c =>
+                c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier" ||
+                c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)
+            ?.Value;
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new InvalidOperationException("UserId claim not found in token");
+        }
+
+        return userId;
     }
 
     public async ValueTask DisposeAsync()
