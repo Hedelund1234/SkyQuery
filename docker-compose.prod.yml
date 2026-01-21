@@ -87,3 +87,7 @@ services:
 
 volumes:
   skyquery-images:
+
+networks:
+  default:
+    name: skyquery-network
